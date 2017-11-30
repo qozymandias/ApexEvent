@@ -24,7 +24,10 @@
         </activity>
         <activity android:name=".RegisterActivity" />
         <activity android:name=".UserAreaActivity" />
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="eventBlock"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
