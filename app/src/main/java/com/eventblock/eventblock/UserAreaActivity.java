@@ -34,9 +34,17 @@ public class UserAreaActivity extends AppCompatActivity {
 
 
         bNext.setOnClickListener(new View.OnClickListener() {
+
+            final String username = etUserName.getText().toString();
+            final String age = etAge.getText().toString();
+
             @Override
             public void onClick(View v) {
                 Intent nextIntent = new Intent(UserAreaActivity.this, MainActivity.class);
+
+                nextIntent.putExtra("username", username);
+                nextIntent.putExtra("age", age);
+
                 UserAreaActivity.this.startActivity(nextIntent);
             }
         });

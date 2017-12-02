@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,13 +40,25 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        // get nav view
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // get text views within nav view
+        View v = navigationView.getHeaderView(0);
+        TextView tvName = (TextView) v.findViewById(R.id.tvName);
+        TextView tvEmail = (TextView) v.findViewById(R.id.tvEmail);
 
+        // get Intent from previous page
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("name");
+        String username = intent.getStringExtra("username");
+        //int age = intent.getIntExtra("age", -1);
 
-        //Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-        //MainActivity.this.startActivity(loginIntent);
+        // set texts
+        String message = "tmp " + name ;
+        tvName.setText(username);
+        tvEmail.setText(message);
 
 
 
