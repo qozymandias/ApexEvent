@@ -15,4 +15,12 @@
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_upload_picture">UploadPicture</string>
+    <string name="title_activity_browser">BrowserActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
 </resources>
