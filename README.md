@@ -1,1 +1,1 @@
-eventblock.xyz
+[eventblock](http://eventblock.xyz/)
