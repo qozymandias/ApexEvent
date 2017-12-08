@@ -1,1 +1,1 @@
-eventBlock
+eventblock.xyz
