@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class LoginRequest extends StringRequest{
 
-    private static final String LOGIN_REQUEST_URL = "https://eventblock.000webhostapp.com/Login.php";
+    private static final String LOGIN_REQUEST_URL = "http://eventblock.xyz/Login.php";
 
     private Map<String,String> params;
 

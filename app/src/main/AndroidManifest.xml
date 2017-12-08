@@ -2,8 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eventblock.eventblock">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
 
-    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -28,6 +29,7 @@
             android:name=".MainActivity"
             android:label="eventBlock"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".UploadPicture"></activity>
     </application>
 
 </manifest>

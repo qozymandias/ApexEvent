@@ -1,12 +1,12 @@
 <?php
     require("password.php");
 
-    $con = mysqli_connect("localhost", "id3776519_eventblockusers", "Oscar191097", "id3776519_users");
+    $con = mysqli_connect("mysql.hostinger.com", "u392533552_oscar", "Oscar191097", "u392533552_users");
     
     $username = $_POST["username"];
     $password = $_POST["password"];
     
-    $statement = mysqli_prepare($con, "SELECT * FROM Users WHERE username = ?");
+    $statement = mysqli_prepare($con, "SELECT * FROM users WHERE username = ?");
     mysqli_stmt_bind_param($statement, "s", $username);
     mysqli_stmt_execute($statement);
     mysqli_stmt_store_result($statement);
