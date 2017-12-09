@@ -53,11 +53,16 @@ public class BrowserActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
+       /* tabLayout.addTab(tabLayout.newTab().setText("Events"));
+        tabLayout.addTab(tabLayout.newTab().setText("Friends"));
+        tabLayout.addTab(tabLayout.newTab().setText("Profile"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);*/
+
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        /*tabLayout.setupWithViewPager(mViewPager);
-
+        tabLayout.setupWithViewPager(mViewPager);
+        /*
         tabLayout.getTabAt(0).setIcon(R.drawable.;
         tabLayout.getTabAt(1).setIcon(R.drawable.image_name_2);
         tabLayout.getTabAt(2).setIcon(R.drawable.image_name_3);*/
