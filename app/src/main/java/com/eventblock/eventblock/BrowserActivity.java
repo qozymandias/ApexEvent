@@ -66,16 +66,6 @@ public class BrowserActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.;
         tabLayout.getTabAt(1).setIcon(R.drawable.image_name_2);
         tabLayout.getTabAt(2).setIcon(R.drawable.image_name_3);*/
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
     }
 
 
