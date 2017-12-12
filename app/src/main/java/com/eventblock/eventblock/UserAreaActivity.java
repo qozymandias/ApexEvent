@@ -40,10 +40,14 @@ public class UserAreaActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
                 Intent nextIntent = new Intent(UserAreaActivity.this, BrowserActivity.class);
 
                 //nextIntent.putExtra("username", username);
                 //nextIntent.putExtra("age", age);
+
+                nextIntent.putExtra("username", username);
+                nextIntent.putExtra("age", age);
 
                 UserAreaActivity.this.startActivity(nextIntent);
             }

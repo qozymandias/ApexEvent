@@ -1,5 +1,6 @@
 package com.eventblock.eventblock;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -36,6 +37,8 @@ public class BrowserActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
+    public String username;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +69,16 @@ public class BrowserActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.;
         tabLayout.getTabAt(1).setIcon(R.drawable.image_name_2);
         tabLayout.getTabAt(2).setIcon(R.drawable.image_name_3);*/
+
+
+        Intent intent = getIntent();
+        this.username = intent.getStringExtra("username");
+
     }
 
+    public String getMyData() {
+        return username;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,5 +152,7 @@ public class BrowserActivity extends AppCompatActivity {
             }
             return null;
         }
+
+
     }
 }
