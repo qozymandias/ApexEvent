@@ -18,6 +18,9 @@ public class UserAreaActivity extends AppCompatActivity {
 
         final EditText etUserName = (EditText) findViewById(R.id.etUserName);
         final EditText etAge = (EditText) findViewById(R.id.etAge);
+
+        final EditText etEmail = (EditText) findViewById(R.id.etEmail);
+
         final TextView welcomeMsg = (TextView) findViewById(R.id.tvWelcomeMsg);
         final Button bNext = (Button) findViewById(R.id.bNext);
 
@@ -27,16 +30,21 @@ public class UserAreaActivity extends AppCompatActivity {
         String username = intent.getStringExtra("username");
         int age = intent.getIntExtra("age", -1);
 
+        String email = intent.getStringExtra("email");
+
         String message = "Welcome " + name ;
         welcomeMsg.setText(message);
         etUserName.setText(username);
         etAge.setText(age + "");
+        etEmail.setText(email);
 
 
         bNext.setOnClickListener(new View.OnClickListener() {
 
             final String username = etUserName.getText().toString();
             final String age = etAge.getText().toString();
+            final String email = etEmail.getText().toString();
+
 
             @Override
             public void onClick(View v) {
@@ -48,6 +56,8 @@ public class UserAreaActivity extends AppCompatActivity {
 
                 nextIntent.putExtra("username", username);
                 nextIntent.putExtra("age", age);
+                nextIntent.putExtra("email", email);
+
 
                 UserAreaActivity.this.startActivity(nextIntent);
             }

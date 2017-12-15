@@ -7,12 +7,13 @@
     $age = $_POST["age"];
     $username = $_POST["username"];
     $password = $_POST["password"];
+    $email = $_POST["email"];  
 
      function registerUser() {
-        global $connect, $name, $age, $username, $password;
+        global $connect, $name, $age, $username, $password, $email;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $statement = mysqli_prepare($connect, "INSERT INTO users (name, username, age, password) VALUES (?, ?, ?, ?)");
-        mysqli_stmt_bind_param($statement, "ssis", $name, $username, $age, $passwordHash);
+        $statement = mysqli_prepare($connect, "INSERT INTO users (name, username, age, password, email) VALUES (?, ?, ?, ?, ?)");
+        mysqli_stmt_bind_param($statement, "ssiss", $name, $username, $age, $passwordHash, $email);
         mysqli_stmt_execute($statement);
         mysqli_stmt_close($statement);     
     }
@@ -32,10 +33,25 @@
         }
     }
 
+    function emailAvailable() {
+        global $connect, $email;
+        $statement = mysqli_prepare($connect, "SELECT * FROM users WHERE email = ?"); 
+        mysqli_stmt_bind_param($statement, "s", $email);
+        mysqli_stmt_execute($statement);
+        mysqli_stmt_store_result($statement);
+        $count = mysqli_stmt_num_rows($statement);
+        mysqli_stmt_close($statement); 
+        if ($count < 1){
+            return true; 
+        }else {
+            return false; 
+        }
+    }
+
     $response = array();
     $response["success"] = false;  
 
-    if (usernameAvailable()){
+    if (usernameAvailable() && emailAvailable()){
         registerUser();
         $response["success"] = true;  
     }

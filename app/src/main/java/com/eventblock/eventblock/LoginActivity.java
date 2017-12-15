@@ -62,12 +62,13 @@ public class LoginActivity extends AppCompatActivity {
                                 String name = jsonObject.getString("name");
                                 String username = jsonObject.getString("username");
                                 int age = jsonObject.getInt("age");
-                                //String password = jsonObject.getString("password");
+                                String email = jsonObject.getString("email");
 
                                 Intent intent = new Intent(LoginActivity.this, UserAreaActivity.class);
                                 intent.putExtra("name", name);
                                 intent.putExtra("username", username);
                                 intent.putExtra("age", age);
+                                intent.putExtra("email", email);
 
                                 LoginActivity.this.startActivity(intent);
 

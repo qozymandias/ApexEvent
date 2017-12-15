@@ -18,7 +18,8 @@ public class RegisterRequest extends StringRequest{
 
 
     public RegisterRequest (String name, String username, int age,
-                            String password, Response.Listener<String> listener) {
+                            String password,
+                            String email, Response.Listener<String> listener) {
 
         super(Method.POST,REGISTER_REQUEST_URL,listener, null);
 
@@ -27,6 +28,7 @@ public class RegisterRequest extends StringRequest{
         params.put("username",username);
         params.put("password",password);
         params.put("age",age + "");
+        params.put("email",email);
     }
 
     @Override

@@ -35,63 +35,7 @@ public class UploadPicture extends AppCompatActivity{
     private static final String SERVER_ADDRESS = "http://eventblock.xyz/SavePicture.php";
 
 
-    ImageView imageToUpload, downloadedImage;
-    Button bUploadImage, bDownloadImage;
-    EditText uploadImageName, downloadImageName;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload_picture);
-
-        imageToUpload = (ImageView) findViewById(R.id.imageToUpload);
-        downloadedImage = (ImageView) findViewById(R.id.downloadedImage);
-
-        bUploadImage = (Button) findViewById(R.id.bUploadImage);
-        bDownloadImage = (Button) findViewById(R.id.bDownloadImage);
-
-        uploadImageName = (EditText) findViewById(R.id.etUploadName);
-        downloadImageName = (EditText) findViewById(R.id.etDownloadName);
-
-        imageToUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(galleryIntent, RESULT_LOAD_IMAGE);
-            }
-        });
-
-        bUploadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Uploading image", Toast.LENGTH_SHORT)
-                        .show();
-                Bitmap image = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
-
-                (new UploadImage(image, uploadImageName.getText().toString())).execute();
-
-            }
-        });
-
-        bDownloadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-
-        if(requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            imageToUpload.setImageURI(selectedImage);
-        }
-    }
-
-    private class UploadImage extends AsyncTask<Void, Void, Void>{
+    public static class UploadImage extends AsyncTask<Void, Void, Void>{
 
         Bitmap image;
         String name;
@@ -123,23 +67,14 @@ public class UploadPicture extends AppCompatActivity{
 
             } catch (Exception e){
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(), "failure", Toast.LENGTH_SHORT)
-                        .show();
             }
 
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Toast.makeText(getApplicationContext(), "Image Uploaded", Toast.LENGTH_SHORT)
-                    .show();
-
-        }
     }
 
-    private HttpParams getHttpRequestParams() {
+    private static HttpParams getHttpRequestParams() {
         HttpParams httpRequestParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpRequestParams, 1000 * 30);
         HttpConnectionParams.setSoTimeout(httpRequestParams, 1000 * 30);

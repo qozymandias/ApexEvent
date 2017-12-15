@@ -38,6 +38,8 @@ public class BrowserActivity extends AppCompatActivity {
     private ViewPager mViewPager;
 
     public String username;
+    public String email;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +75,19 @@ public class BrowserActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         this.username = intent.getStringExtra("username");
+        this.email = intent.getStringExtra("email");
+
 
     }
 
     public String getMyData() {
         return username;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
