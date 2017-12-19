@@ -57,7 +57,7 @@ public class Tab3Profile extends Fragment {
         return rootView;
     }
 
-    private class DownloadImage extends AsyncTask<Void, Void, Bitmap> {
+    public class DownloadImage extends AsyncTask<Void, Void, Bitmap> {
 
         String name;
 
