@@ -32,6 +32,13 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
 
+        // fb login stuff
+        <meta-data android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id"/>
+
+
+        // fb ends here
+
     </application>
 
 

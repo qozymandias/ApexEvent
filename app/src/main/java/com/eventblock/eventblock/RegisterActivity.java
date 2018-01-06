@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +25,15 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.ProfileTracker;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.UploadNotificationConfig;
@@ -35,7 +45,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.UUID;
+
+
+
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -54,7 +68,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText etEmail;
     private Button bRegister;
 
+    CallbackManager callbackManager;
+
     private static final String UPLOAD_URL = "http://eventblock.xyz/Upload/upload.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +101,135 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+
+        LoginButton fbRegister = (LoginButton) findViewById(R.id.bRegister2);
+
+
+
+        fbRegister.setReadPermissions(Arrays.asList(
+                "public_profile", "email", "user_birthday", "user_friends"));
+
+        callbackManager = CallbackManager.Factory.create();
+
+        fbRegister.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+            private ProfileTracker mProfileTracker;
+
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                if(Profile.getCurrentProfile() == null) {
+                    mProfileTracker = new ProfileTracker() {
+                        @Override
+                        protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
+                            this.stopTracking();
+                            Profile.setCurrentProfile(currentProfile);
+
+                        }
+                    };
+                    mProfileTracker.startTracking();
+
+                }
+                else {
+                    Profile profile = Profile.getCurrentProfile();
+                    Log.v("facebook - profile", profile.getFirstName());
+
+                }
+
+
+                // App code
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                Log.v("LoginActivity", response.toString());
+
+                                // Application code
+                                try {
+                                    String email = object.getString("email");
+                                    String birthday = object.getString("birthday"); // 01/31/1980 format
+                                    String name = object.getString("name");
+                                    String id = object.getString("id");
+
+                                    String fName = object.getString("first_name");
+                                    String lName = object.getString("last_name");
+
+
+                                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            try {
+                                                JSONObject jsonResponse = new JSONObject(response);
+
+                                                boolean success = jsonResponse.getBoolean("success");
+
+                                                if(success) {
+
+                                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                                    RegisterActivity.this.startActivity(intent);
+                                                } else {
+                                                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                                                    builder.setMessage("Register failed")
+                                                            .setNegativeButton("Retry", null)
+                                                            .create()
+                                                            .show();
+                                                }
+
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    };
+
+
+                                    RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
+
+                                    RegisterRequest registerRequest = new RegisterRequest(name,fName+"."+lName+id,20, id , email, responseListener);
+                                    queue.add(registerRequest);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email,gender,birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+
+                /*Bundle b = request.getParameters();
+
+                ArrayList<String> paras = b.getStringArrayList("fields");
+
+                Toast.makeText(getApplicationContext(), "Email: " + paras.get(2)
+                        + "\n" + "Birthday: " + paras.get(4)
+                        + "\n" + "Name: " + paras.get(1), Toast.LENGTH_LONG).show();*/
+
+
+            }
+
+            @Override
+            public void onCancel() {
+                Log.v("facebook - onCancel", "cancelled");
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                Log.v("facebook - onError", e.getMessage());
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
 
 
         bRegister.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +341,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         }
+
+        if (callbackManager.onActivityResult(requestCode, resultCode, data)) {
+            return;
+        }
+
     }
 
 
@@ -243,6 +394,8 @@ public class RegisterActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
 
 
 }

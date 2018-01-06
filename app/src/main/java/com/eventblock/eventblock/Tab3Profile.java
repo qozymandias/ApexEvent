@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import org.w3c.dom.Text;
 
 import java.io.InputStream;
@@ -44,6 +46,7 @@ public class Tab3Profile extends Fragment {
         ivProfile = (ImageView) rootView.findViewById(R.id.ivPicture);
 
         BrowserActivity activity = (BrowserActivity) getActivity();
+        assert activity != null;
         String username = activity.getMyData();
         String email = activity.getEmail();
 
@@ -53,6 +56,11 @@ public class Tab3Profile extends Fragment {
 
         (new DownloadImage(etUserName.getText().toString())).execute();
 
+        /*String loc = SERVER_ADDRESS + "Upload/uploads/" + username + ".png";
+
+        Glide.with(getContext())
+                .load(loc)
+                .into(ivProfile);*/
 
         return rootView;
     }
