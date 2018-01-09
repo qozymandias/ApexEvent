@@ -146,13 +146,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 // Application code
                                 try {
-                                    String email = object.getString("email");
-                                    String birthday = object.getString("birthday"); // 01/31/1980 format
-                                    String name = object.getString("name");
-                                    String id = object.getString("id");
+                                    final String email = object.getString("email");
+                                    final String birthday = object.getString("birthday"); // 01/31/1980 format
+                                    final String name = object.getString("name");
+                                    final String id = object.getString("id");
 
-                                    String fName = object.getString("first_name");
-                                    String lName = object.getString("last_name");
+                                    final String fName = object.getString("first_name");
+                                    final String lName = object.getString("last_name");
 
 
                                     Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -166,6 +166,12 @@ public class RegisterActivity extends AppCompatActivity {
                                                 if(success) {
 
                                                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+
+                                                    intent.putExtra("name", name);
+                                                    intent.putExtra("username", fName+"."+lName+id);
+                                                    intent.putExtra("age", 20);
+                                                    intent.putExtra("email", email);
+
                                                     RegisterActivity.this.startActivity(intent);
                                                 } else {
                                                     AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
@@ -185,7 +191,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
-                                    RegisterRequest registerRequest = new RegisterRequest(name,fName+"."+lName+id,20, id , email, responseListener);
+                                    RegisterRequest registerRequest = new RegisterRequest(name,fName+"."+lName+id,20, id + "" , email, responseListener);
                                     queue.add(registerRequest);
 
                                 } catch (JSONException e) {
@@ -194,7 +200,7 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,gender,birthday");
+                parameters.putString("fields", "id,name,email,gender,birthday,first_name,last_name");
                 request.setParameters(parameters);
                 request.executeAsync();
 

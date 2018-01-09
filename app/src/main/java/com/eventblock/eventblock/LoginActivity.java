@@ -29,6 +29,7 @@ import com.facebook.GraphResponse;
 import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -51,6 +52,8 @@ public class LoginActivity extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
+        //LoginManager.getInstance().logOut();
+
         setContentView(R.layout.activity_login);
 
         final EditText etUserName = (EditText) findViewById(R.id.etUserName);
@@ -64,6 +67,93 @@ public class LoginActivity extends AppCompatActivity {
                 "public_profile", "email", "user_birthday", "user_friends"));
 
         callbackManager = CallbackManager.Factory.create();
+
+
+        boolean loggedIn = AccessToken.getCurrentAccessToken() != null;
+
+        if(loggedIn) {
+            GraphRequest request = GraphRequest.newMeRequest(
+                    AccessToken.getCurrentAccessToken(),
+                    new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject object, GraphResponse response) {
+                            Log.v("LoginActivity", response.toString());
+
+                            // Application code
+                            try {
+                                String email = object.getString("email");
+                                String birthday = object.getString("birthday"); // 01/31/1980 format
+                                String name = object.getString("name");
+                                String id = object.getString("id");
+
+                                    /*
+                                    Intent intent = new Intent(LoginActivity.this, UserAreaActivity.class);
+                                    intent.putExtra("name", name);
+                                    intent.putExtra("username", name+id);
+                                    intent.putExtra("age", id);
+                                    intent.putExtra("email", email);
+
+                                    LoginActivity.this.startActivity(intent);*/
+
+
+                                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                                    @Override
+                                    public void onResponse(String response) {
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(response);
+
+                                            boolean success = jsonObject.getBoolean("success");
+
+                                            if(success) {
+
+                                                String name = jsonObject.getString("name");
+                                                String username = jsonObject.getString("username");
+                                                int age = jsonObject.getInt("age");
+                                                String email = jsonObject.getString("email");
+
+                                                Intent intent = new Intent(LoginActivity.this, UserAreaActivity.class);
+                                                intent.putExtra("name", name);
+                                                intent.putExtra("username", username);
+                                                intent.putExtra("age", age);
+                                                intent.putExtra("email", email);
+
+                                                LoginActivity.this.startActivity(intent);
+
+
+                                            } else {
+                                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                                builder.setMessage("Login failed")
+                                                        .setNegativeButton("Retry", null)
+                                                        .create()
+                                                        .show();
+                                            }
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                };
+
+                                FBLoginRequest loginRequest = new FBLoginRequest(email, responseListener);
+
+                                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+                                queue.add(loginRequest);
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id,name,email,gender,birthday");
+            request.setParameters(parameters);
+            request.executeAsync();
+
+
+
+
+        }
 
         fbLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
