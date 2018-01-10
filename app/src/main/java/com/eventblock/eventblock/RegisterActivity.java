@@ -47,8 +47,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.UUID;
-
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -67,6 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText etPassword;
     private EditText etEmail;
     private Button bRegister;
+    private EditText etPasswordConfirm;
 
     CallbackManager callbackManager;
 
@@ -86,6 +87,7 @@ public class RegisterActivity extends AppCompatActivity {
         etName = (EditText) findViewById(R.id.etName);
         etUserName = (EditText) findViewById(R.id.etUserName);
         etPassword = (EditText) findViewById(R.id.etPassword);
+        etPasswordConfirm = (EditText) findViewById(R.id.etPassword2);
 
         etEmail = (EditText) findViewById(R.id.etEmail);
 
@@ -227,17 +229,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
-
-
-
-
-
-
         bRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -246,6 +237,7 @@ public class RegisterActivity extends AppCompatActivity {
                 final String name = etName.getText().toString();
                 final String username = etUserName.getText().toString();
                 final String password = etPassword.getText().toString();
+                final String passwordConfirm = etPasswordConfirm.getText().toString();
                 final int age = Integer.parseInt(etAge.getText().toString());
                 final String email = etEmail.getText().toString();
 
@@ -257,48 +249,124 @@ public class RegisterActivity extends AppCompatActivity {
                 (new UploadPicture.UploadImage(image, username) ).execute();
                 */
 
+                if (!validateEmail(email)) {
+                    etEmail.setError("Invalid Email");
+                    etEmail.requestFocus();
+                } else if (!validatePassword(password)) {
+                    etPassword.setError("Invalid Password");
+                    etPassword.requestFocus();
+                } else if (!password.equals(passwordConfirm)) {
+                    etPasswordConfirm.setError("Password does not match");
+                    etPasswordConfirm.requestFocus();
+                } else {
+
+                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+
+                                boolean success = jsonResponse.getBoolean("success");
+
+                                if(success) {
+
+                                    if(imageToUpload != null) uploadImage();
+
+                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    RegisterActivity.this.startActivity(intent);
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                                    builder.setMessage("Register failed")
+                                            .setNegativeButton("Retry", null)
+                                            .create()
+                                            .show();
+                                }
 
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-
-                            boolean success = jsonResponse.getBoolean("success");
-
-                            if(success) {
-
-                                uploadImage();
-
-                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                RegisterActivity.this.startActivity(intent);
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                                builder.setMessage("Register failed")
-                                        .setNegativeButton("Retry", null)
-                                        .create()
-                                        .show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                };
+                    };
 
 
-                RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
+                    RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
-                RegisterRequest registerRequest = new RegisterRequest(name,username,age,password, email, responseListener);
-                queue.add(registerRequest);
+                    RegisterRequest registerRequest = new RegisterRequest(name,username,age,password, email, responseListener);
+                    queue.add(registerRequest);
+
+                }
+
+
 
             }
 
 
         });
 
+    }
+
+
+    //Return true if password is valid and false if password is invalid
+    protected boolean validatePassword(String password) {
+        if(password!=null && password.length()>9) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //Return true if email is valid and false if email is invalid
+    protected boolean validateEmail(String email) {
+        String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+        Pattern pattern = Pattern.compile(emailPattern);
+        Matcher matcher = pattern.matcher(email);
+
+
+        if(matcher.matches() ) {
+
+            Response.Listener<String> responseListener = new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonResponse = new JSONObject(response);
+
+                        boolean success = jsonResponse.getBoolean("success");
+
+                        if(success) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                            builder.setMessage("Email sent! Please check emails to verify")
+                                    .setNegativeButton("Continue", null)
+                                    .create()
+                                    .show();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                            builder.setMessage("Register failed")
+                                    .setNegativeButton("Retry", null)
+                                    .create()
+                                    .show();
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+
+            RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
+
+            EmailRequest emailRequest = new EmailRequest(email, responseListener);
+            queue.add(emailRequest);
+
+
+            return true;
+        }
+
+        return false ;
     }
 
     private void requestStoragePermission(){
@@ -378,27 +446,32 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private void uploadImage() {
-        String name = etUserName.getText().toString().trim();
-        String path = getPath(filePath);
-
         try {
-            String uploadID = UUID.randomUUID().toString();
+            String name = etUserName.getText().toString().trim();
+            String path = getPath(filePath);
 
-            new MultipartUploadRequest(this, uploadID, UPLOAD_URL)
-                    .addFileToUpload(path, "image")
-                    .addParameter("name", name)
-                    .setNotificationConfig(new UploadNotificationConfig())
-                    .setMaxRetries(2)
-                    .startUpload();
+            try {
+                String uploadID = UUID.randomUUID().toString();
 
-            Toast.makeText(getApplicationContext(), "Uploaded image", Toast.LENGTH_SHORT)
-                    .show();
+                new MultipartUploadRequest(this, uploadID, UPLOAD_URL)
+                        .addFileToUpload(path, "image")
+                        .addParameter("name", name)
+                        .setNotificationConfig(new UploadNotificationConfig())
+                        .setMaxRetries(2)
+                        .startUpload();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
+                Toast.makeText(getApplicationContext(), "Uploaded image", Toast.LENGTH_SHORT)
+                        .show();
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
 
