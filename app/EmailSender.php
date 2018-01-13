@@ -1,29 +1,35 @@
 <?php
-    require("password.php");
-
     ini_set( 'display_errors', 1 );
     error_reporting( E_ALL );
 
     $to = $_POST["email"];
+
+    $name = $_POST["username"];
+    $password = $_POST["password"];
 
     $from = "noreply@eventblock.xyz";
  
     $subject = "Email confirmation";
 
 
-    $emailHash = hexdec( md5($to) );
-
-    $addr = 'http://eventblock.xyz/ConfirmEmail=' . $emailHash . '.php';
-
-    $fp=fopen( $addr ,'w');
-    fwrite($fp, 'data to be written');
-    fclose($fp);
-
-    move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $fp);
+    $emailHash = md5($to);
 
  
-    $message = "please click this link to confirm your email address: " . $addr;
+    $message = '
  
+    Thanks for signing up!
+    Your account has been created, you can login with the following credentials after you have activated your account by pressing the url below.
+     
+    ------------------------
+    Username: '.$name.'
+    Password: '.$password.'
+    ------------------------
+     
+    Please click this link to activate your account:
+    http://eventblock.xyz/verify.php?email='.$to.'&hash='.$emailHash.'
+     
+    ';
+     
     $headers = "From:" . $from;
  
     mail($to,$subject,$message, $headers);

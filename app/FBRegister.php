@@ -13,7 +13,7 @@
         global $connect, $name, $age, $username, $password, $email;
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
         $hash = md5($email);
-        $active = 0;
+        $active = 1;
         $statement = mysqli_prepare($connect, "INSERT INTO users (name, username, age, password, email, hash, active) VALUES (?, ?, ?, ?, ?, ?, ?)");
         mysqli_stmt_bind_param($statement, "ssisssi", $name, $username, $age, $passwordHash, $email, $hash, $active);
         mysqli_stmt_execute($statement);

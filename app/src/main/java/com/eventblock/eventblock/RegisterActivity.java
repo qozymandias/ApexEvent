@@ -73,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private static final String UPLOAD_URL = "http://eventblock.xyz/Upload/upload.php";
 
+    private boolean verify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,8 @@ public class RegisterActivity extends AppCompatActivity {
         etEmail = (EditText) findViewById(R.id.etEmail);
 
         bRegister = (Button) findViewById(R.id.bRegister);
+
+        verify = false;
 
 
         imageToUpload = (ImageView) findViewById(R.id.imageToUpload);
@@ -193,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
-                                    RegisterRequest registerRequest = new RegisterRequest(name,fName+"."+lName+id,20, id + "" , email, responseListener);
+                                    FBRegisterRequest registerRequest = new FBRegisterRequest(name,fName+"."+lName+id,20, id + "" , email, responseListener);
                                     queue.add(registerRequest);
 
                                 } catch (JSONException e) {
@@ -249,7 +252,7 @@ public class RegisterActivity extends AppCompatActivity {
                 (new UploadPicture.UploadImage(image, username) ).execute();
                 */
 
-                if (!validateEmail(email)) {
+                if (!validateEmail(email, username, password)) {
                     etEmail.setError("Invalid Email");
                     etEmail.requestFocus();
                 } else if (!validatePassword(password)) {
@@ -317,7 +320,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     //Return true if email is valid and false if email is invalid
-    protected boolean validateEmail(String email) {
+    protected boolean validateEmail(String email, String username, String password) {
         String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
@@ -341,12 +344,15 @@ public class RegisterActivity extends AppCompatActivity {
                                     .setNegativeButton("Continue", null)
                                     .create()
                                     .show();
+
+                            verify = true;
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                             builder.setMessage("Register failed")
                                     .setNegativeButton("Retry", null)
                                     .create()
                                     .show();
+                            verify = false;
                         }
 
 
@@ -359,14 +365,14 @@ public class RegisterActivity extends AppCompatActivity {
 
             RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
-            EmailRequest emailRequest = new EmailRequest(email, responseListener);
+            EmailRequest emailRequest = new EmailRequest(email,username, password, responseListener);
             queue.add(emailRequest);
 
 
             return true;
         }
 
-        return false ;
+        return false;
     }
 
     private void requestStoragePermission(){
