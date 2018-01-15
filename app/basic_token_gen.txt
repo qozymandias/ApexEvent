@@ -1,0 +1,33 @@
+Basic token generations 
+
+Daily free tokens are given for openning app (How many free per day? 3 firstday)
+How many increase for consecutive daily returns ( increase by 1 every )
+
+Calendar chart showing increase tokens 
+
+Day    1    2    3    4    5    6    7
+Tokens    20        5    6    7    8    9
+                            
+                            
+
+Minimum donations (choose how much you want to donate
+Maxium donations (choose how much you want to donate )
+Tokens don’t stack, must use app to obtain the tokens  
+Time based (reward early donations)
+Refresh every day at 00.00
+Ticket winners are charged for the donations
+None ticket winners get donated tokens returned
+
+Additional features 
+
+Number of positions in ranking (Seen or not seen ranking) 
+Token donations can be used to gauge attendees
+Organisers 
+Reward for returning event attenders Promotional determined by event organisers)
+Feedback formed filled in will receive tokens
+Inviting / referers to friends who attend
+Sharing on social media 
+
+
+
+Encrypted identities or public

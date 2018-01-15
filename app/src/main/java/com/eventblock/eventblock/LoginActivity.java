@@ -1,9 +1,17 @@
 package com.eventblock.eventblock;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,8 +41,11 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 // ga0RGNYHvNM5d0SLGQfpQWAPGJ8=
 
@@ -46,15 +57,51 @@ public class LoginActivity extends AppCompatActivity {
 
     CallbackManager callbackManager;
 
+    private PendingIntent pendingIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        setTheme(R.style.AppTheme);
+
         super.onCreate(savedInstanceState);
+
+
+
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "com.eventblock.eventblock",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+
+
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        //LoginManager.getInstance().logOut();
+        LoginManager.getInstance().logOut();
 
         setContentView(R.layout.activity_login);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        int i = preferences.getInt("numberoflaunches", 1);
+
+        if (i < 2){
+            alarmMethod();
+            i++;
+            editor.putInt("numberoflaunches", i);
+            editor.commit();
+        }
 
         final EditText etUserName = (EditText) findViewById(R.id.etUserName);
         final EditText etPassword = (EditText) findViewById(R.id.etPassword);
@@ -145,8 +192,9 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     });
+
             Bundle parameters = new Bundle();
-            parameters.putString("fields", "id,name,email,gender,birthday");
+            parameters.putString("fields", "id,name,email,birthday");
             request.setParameters(parameters);
             request.executeAsync();
 
@@ -366,5 +414,29 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
     }
+
+
+
+    private void alarmMethod(){
+        Intent myIntent = new Intent(this , NotifyService.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.AM_PM, Calendar.PM);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, pendingIntent);
+        }
+
+
+        Toast.makeText(LoginActivity.this, "Starting Alarm", Toast.LENGTH_LONG).show();
+    }
+
+
 }
 

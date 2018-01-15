@@ -19,7 +19,7 @@
     mysqli_stmt_bind_param($statement, "s", $username);
     mysqli_stmt_execute($statement);
     mysqli_stmt_store_result($statement);
-    mysqli_stmt_bind_result($statement, $colUserID, $colName, $colUsername, $colAge, $colPassword, $colEmail);
+    mysqli_stmt_bind_result($statement, $colUserID, $colName, $colUsername, $colAge, $colPassword, $colEmail, $colHash, $colActive);
     
     $response = array();
     $response["success"] = false;  
@@ -31,6 +31,8 @@
             $response["age"] = $colAge;
             $response["username"] = $colUsername;
             $response["email"] = $colEmail;
+            $response["hash"] = $colHash;
+            $response["active"] = $colActive;
         }
     }
 
