@@ -97,8 +97,9 @@ public class Tab2Friends extends Fragment implements AdapterView.OnItemClickList
                                 String username = user.getString("username");
                                 double age = user.getDouble("age");
                                 String email = user.getString("email");
+                                int fb_id = user.getInt("fb_id");
 
-                                User userObj = new User(id,username, email, 0.0, age);
+                                User userObj = new User(id,username, email, 0.0, age, fb_id);
                                 getUsersArray().add(userObj);
 
                             }

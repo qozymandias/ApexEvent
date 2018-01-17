@@ -12,12 +12,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class BrowserActivity extends AppCompatActivity {
@@ -71,6 +73,10 @@ public class BrowserActivity extends AppCompatActivity {
         tabLayout.getTabAt(0).setIcon(R.drawable.;
         tabLayout.getTabAt(1).setIcon(R.drawable.image_name_2);
         tabLayout.getTabAt(2).setIcon(R.drawable.image_name_3);*/
+
+
+
+
 
 
         Intent intent = getIntent();

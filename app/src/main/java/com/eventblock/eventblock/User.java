@@ -26,16 +26,18 @@ public class User {
     private String email;
     private double rating;
     private double price;
+    private int fb_id;
 
     public Bitmap profilePic;
 
 
-    public User(int id, String username, String email, double rating, double price) {
+    public User(int id, String username, String email, double rating, double price, int fb_id) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.rating = rating;
         this.price = price;
+        this.fb_id = fb_id;
 
         //(new User.getImage(username)).execute();
 
@@ -66,7 +68,11 @@ public class User {
     }
 
     public String getProfilePic() {
-        return SERVER_ADDRESS + "Upload/uploads/" + this.username + ".png";
+        return SERVER_ADDRESS + "Upload/uploads/" + this.username + ".jpeg";
+    }
+
+    public int getFb_id() {
+        return fb_id;
     }
 
     public class getImage extends AsyncTask<Void, Void, Bitmap> {

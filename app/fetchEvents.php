@@ -16,13 +16,13 @@
     }
 
     //creating a query
-    $stmt = $conn->prepare("SELECT user_id, username, age, email, fb_id FROM users;");
+    $stmt = $conn->prepare("SELECT * FROM events;");
 
     //executing the query 
     $stmt->execute();
 
     //binding results to the query 
-    $stmt->bind_result($id, $username, $age, $email, $fb_id);
+    $stmt->bind_result($id, $event_name, $description, $capacity, $start_time, $end_time, $is_free, $venue_name, $venue_lattitude, $venue_longitude, $localized_multi_line_address_display);
 
     $users = array(); 
 
@@ -30,10 +30,16 @@
     while($stmt->fetch()){
         $temp = array();
         $temp['id'] = $id;
-        $temp['username'] = $username; 
-        $temp['age'] = $age;
-        $temp['email'] = $email; 
-        $temp['fb_id'] = $fb_id; 
+        $temp['event_name'] = $event_name;
+        $temp['description'] = $description;
+        $temp['capacity'] = $capacity;
+        $temp['start_time'] = $start_time;
+        $temp['end_time'] = $end_time;
+        $temp['is_free'] = $is_free;
+        $temp['venue_name'] = $venue_name;
+        $temp['venue_lattitude'] = $venue_lattitude;
+        $temp['venue_longitude'] = $venue_longitude;
+        $temp['localized_multi_line_address_display'] = $localized_multi_line_address_display;
         
         array_push($users, $temp);
     }

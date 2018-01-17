@@ -54,13 +54,17 @@ public class Tab3Profile extends Fragment {
         etUserName.setText(username);
         etEmail.setText(email);
 
-        (new DownloadImage(etUserName.getText().toString())).execute();
+        //(new DownloadImage(etUserName.getText().toString())).execute();
 
-        /*String loc = SERVER_ADDRESS + "Upload/uploads/" + username + ".png";
+        String loc = SERVER_ADDRESS + "Upload/uploads/" + username + ".jpeg";
 
         Glide.with(getContext())
                 .load(loc)
-                .into(ivProfile);*/
+                .into(ivProfile);
+
+
+
+
 
         return rootView;
     }

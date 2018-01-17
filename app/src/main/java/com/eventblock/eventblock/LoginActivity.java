@@ -274,6 +274,17 @@ public class LoginActivity extends AppCompatActivity {
                                                     int age = jsonObject.getInt("age");
                                                     String email = jsonObject.getString("email");
 
+                                                    Intent intent1 = getIntent();
+                                                    Boolean receivedTokens = false;
+                                                    if(intent1 != null)
+                                                        receivedTokens = intent1.getBooleanExtra("receivedTokens", false);
+                                                    if(receivedTokens) {
+                                                        TokenGenerator tk = new TokenGenerator(username, LoginActivity.this);
+                                                        tk.generate();
+                                                    }
+
+
+
                                                     Intent intent = new Intent(LoginActivity.this, UserAreaActivity.class);
                                                     intent.putExtra("name", name);
                                                     intent.putExtra("username", username);
@@ -353,6 +364,10 @@ public class LoginActivity extends AppCompatActivity {
                 final String username = etUserName.getText().toString();
                 final String password = etPassword.getText().toString();
 
+
+
+
+
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -367,6 +382,17 @@ public class LoginActivity extends AppCompatActivity {
                                 String username = jsonObject.getString("username");
                                 int age = jsonObject.getInt("age");
                                 String email = jsonObject.getString("email");
+
+
+                                Intent intent1 = getIntent();
+                                Boolean receivedTokens = false;
+                                if(intent1 != null)
+                                    receivedTokens = intent1.getBooleanExtra("receivedTokens", false);
+                                if(receivedTokens) {
+                                    TokenGenerator tk = new TokenGenerator(username, LoginActivity.this);
+                                    tk.generate();
+                                }
+
 
                                 Intent intent = new Intent(LoginActivity.this, UserAreaActivity.class);
                                 intent.putExtra("name", name);
@@ -423,18 +449,38 @@ public class LoginActivity extends AppCompatActivity {
         pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
 
         Calendar calendar = Calendar.getInstance();
+        Calendar currentCal = Calendar.getInstance();
+
+
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.HOUR, 9);
         calendar.set(Calendar.AM_PM, Calendar.PM);
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
 
+        long intendedTime = calendar.getTimeInMillis();
+        long currentTime = currentCal.getTimeInMillis();
+
+
+
+        if(intendedTime >= currentTime){
+            // you can add buffer time too here to ignore some small differences in milliseconds
+            // set from today
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else{
+            // set from next day
+            // you might consider using calendar.add() for adding one day to the current day
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            intendedTime = calendar.getTimeInMillis();
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+        }
+        Toast.makeText(LoginActivity.this, "Starting Alarm", Toast.LENGTH_LONG).show();
+
+        /*
         if (alarmManager != null) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, pendingIntent);
-        }
+        }*/
 
-
-        Toast.makeText(LoginActivity.this, "Starting Alarm", Toast.LENGTH_LONG).show();
     }
 
 

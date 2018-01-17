@@ -9,10 +9,28 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp">
 
+
         <RelativeLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/card_edge"
             android:padding="8dp">
+
+            <TextView
+                android:id="@+id/textViewRating2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textViewPrice"
+                android:layout_alignBottom="@+id/textViewPrice"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/colorPrimary"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="4.7"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small.Inverse"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/imageView"
@@ -39,7 +57,8 @@
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/imageView"
                 android:text="13.3 Inch, 256 GB"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="@android:color/black" />
 
             <TextView
                 android:id="@+id/textViewRating"
@@ -66,6 +85,7 @@
                 android:layout_toRightOf="@id/imageView"
                 android:text="INR 56990"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/black"
                 android:textStyle="bold" />
 
         </RelativeLayout>

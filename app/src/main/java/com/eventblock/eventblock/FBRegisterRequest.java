@@ -18,8 +18,9 @@ public class FBRegisterRequest extends StringRequest{
 
 
     public FBRegisterRequest (String name, String username, int age,
-                            String password,
-                            String email, Response.Listener<String> listener) {
+                              String password,
+                              String email,
+                              String id, Response.Listener<String> listener) {
 
         super(Method.POST,REGISTER_REQUEST_URL,listener, null);
 
@@ -29,6 +30,7 @@ public class FBRegisterRequest extends StringRequest{
         params.put("password",password);
         params.put("age",age + "");
         params.put("email",email);
+        params.put("fb_id",id );
     }
 
     @Override

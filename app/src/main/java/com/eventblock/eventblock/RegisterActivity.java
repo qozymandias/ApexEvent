@@ -196,7 +196,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                                     RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
-                                    FBRegisterRequest registerRequest = new FBRegisterRequest(name,fName+"."+lName+id,20, id + "" , email, responseListener);
+                                    FBRegisterRequest registerRequest = new FBRegisterRequest(name,
+                                            fName+"."+lName+id,20, id + "" ,
+                                            email, id + "",  responseListener);
                                     queue.add(registerRequest);
 
                                 } catch (JSONException e) {

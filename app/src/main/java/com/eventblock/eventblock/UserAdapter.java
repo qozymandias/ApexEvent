@@ -1,18 +1,25 @@
 package com.eventblock.eventblock;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+
+import static android.app.Activity.*;
 
 /**
  * Created by oscar on 19/12/17.
@@ -33,6 +40,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         LayoutInflater inflater = LayoutInflater.from(mCtx);
         View view = inflater.inflate(R.layout.friend_list_item, null);
+
+
+        /*Display display = ((WindowManager) mCtx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
+        int width = display.getWidth(); // ((display.getWidth()*20)/100)
+        int height = display.getHeight();// ((display.getHeight()*30)/100)
+
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width,height);
+        view.setLayoutParams(parms);*/
+
         UserViewHolder holder = new UserViewHolder(view);
         return holder;
 
@@ -49,9 +66,22 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.textViewRating.setText(String.valueOf(user.getRating()));
         holder.textViewPrice.setText(String.valueOf(user.getPrice()));
 
-        Glide.with(mCtx)
-                .load(user.getProfilePic())
-                .into(holder.imageView);
+        if(user.getFb_id() != 0) {
+
+
+            Glide.with(mCtx)
+                    .load( "https://graph.facebook.com/" + user.getFb_id()+ "/picture?type=large")
+                    .into(holder.imageView);
+
+        } else {
+
+            Glide.with(mCtx)
+                    .load(user.getProfilePic())
+                    .into(holder.imageView);
+        }
+
+
+
 
     }
 

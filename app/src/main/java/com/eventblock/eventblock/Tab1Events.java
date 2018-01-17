@@ -3,6 +3,8 @@ package com.eventblock.eventblock;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,17 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +33,22 @@ import java.util.List;
  * Created by oscar on 8/12/17.
  */
 
-public class Tab1Events extends ListFragment implements AdapterView.OnItemClickListener {
+public class Tab1Events extends Fragment implements AdapterView.OnItemClickListener  {
+
+    private static final String SERVER_ADDRESS = "http://eventblock.xyz/fetchEvents.php";
+
+    RecyclerView recyclerView;
+    EventAdapter adapter;
+    List<Event> eventList;
+    View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab1_events, container, false);
+        view = rootView;
+
+
 
         return rootView;
     }
@@ -34,78 +57,85 @@ public class Tab1Events extends ListFragment implements AdapterView.OnItemClickL
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        String[] events = new String[] {
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12"
-        };
+        eventList = new ArrayList<Event>();
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
-        int icon = R.drawable.cal;
-
-        String[] ranking = new String[]{
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "11",
-                "12"
-        };
-
-        /*
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getListView().getContext(),
-                android.R.layout.simple_list_item_1, events);
-        //getListView().setAdapter(adapter);
-
-
-        //ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(),
-        //        events, android.R.layout.simple_list_item_1);
-        setListAdapter(adapter);
-        getListView().setOnItemClickListener(this);*/
-
-
-        // Each row in the list stores country name, currency and flag
-        List<HashMap<String,String>> aList = new ArrayList<HashMap<String,String>>();
-
-        for(int i=0;i<12;i++){
-            HashMap<String, String> hm = new HashMap<String,String>();
-            hm.put("events", "Event : " + events[i]);
-            hm.put("ranking","Ranking : " + ranking[i]);
-            hm.put("icon", Integer.toString(icon) );
-            aList.add(hm);
-        }
-
-        // Keys used in Hashmap
-        String[] from = { "events","ranking","icon" };
-
-        // Ids of views in listview_layout
-        int[] to = { R.id.tvEvent,R.id.tvRank,R.id.ivIcon};
-
-        // Instantiating an adapter to store each items
-        // R.layout.listview_layout defines the layout of each item
-        SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.list_item, from, to);
-
-        setListAdapter(adapter);
-
+        loadEvents();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
+
+    private void loadEvents() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, SERVER_ADDRESS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONArray users = new JSONArray(response);
+
+                            for(int i = 0; i < users.length(); i++) {
+                                JSONObject user = users.getJSONObject(i);
+
+                                int id = user.getInt("id");
+                                String event_name = user.getString("event_name");
+                                String description = user.getString("description");
+                                int capacity = user.getInt("capacity");
+                                String start_time = user.getString("start_time");
+                                String end_time = user.getString("end_time");
+                                String is_free = user.getString("is_free");
+                                String venue_name = user.getString("venue_name");
+                                String venue_lattitude = user.getString("venue_lattitude");
+                                String venue_longitude = user.getString("venue_longitude");
+                                String localized_multi_line_address_display = user.getString("localized_multi_line_address_display");
+
+
+                                Event eventObj = new Event(id,event_name,description,capacity, start_time,end_time,
+                                is_free,venue_name, venue_lattitude,venue_longitude,localized_multi_line_address_display);
+                                getEventArray().add(eventObj);
+
+                            }
+
+                            adapter = new EventAdapter(getActivity().getApplicationContext(), eventList);
+                            recyclerView.setAdapter(adapter);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity().getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        queue.add(stringRequest);
+
+
+    }
+
+    public ArrayList<Event> getEventArray() {
+        return (ArrayList<Event>) eventList;
+    }
+
+
+
+
+
+
+
+
+
 
 }

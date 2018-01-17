@@ -1,6 +1,6 @@
 Basic token generations 
 
-Daily free tokens are given for openning app (How many free per day? 3 firstday)
+Daily free tokens are given for opening app (How many free per day? 3 first day)
 How many increase for consecutive daily returns ( increase by 1 every )
 
 Calendar chart showing increase tokens 
@@ -21,11 +21,11 @@ None ticket winners get donated tokens returned
 Additional features 
 
 Number of positions in ranking (Seen or not seen ranking) 
-Token donations can be used to gauge attendees
-Organisers 
+Token donations can be used to gouge attendees
+Organizers 
 Reward for returning event attenders Promotional determined by event organisers)
 Feedback formed filled in will receive tokens
-Inviting / referers to friends who attend
+Inviting / referees to friends who attend
 Sharing on social media 
 
 

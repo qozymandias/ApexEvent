@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -28,19 +29,25 @@ public class NotifyService extends Service {
 
         NotificationManager mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         Intent intent1 = new Intent(this.getApplicationContext(), LoginActivity.class);
+
+        intent1.putExtra("receivedTokens", true);
+
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent1, 0);
 
-        Notification mNotify = new Notification.Builder(this)
+        Notification.Builder mNotify = new Notification.Builder(this)
                 .setContentTitle("Token bonus!")
                 .setContentText("You can now receive your daily token bonus!")
                 .setSmallIcon(R.drawable.event)
                 .setContentIntent(pIntent)
                 .setSound(sound)
-                .addAction(0, "Login now", pIntent)
-                .build();
-
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL)
+                //.addAction(0, "Login now", pIntent)
+                .setAutoCancel(true);
+        //int flags = Notification.FLAG_AUTO_CANCEL;
+        //mNotify.build().flags = flags;
         if (mNM != null) {
-            mNM.notify(1, mNotify);
+            mNM.notify(1,mNotify.build());
         }
+
     }
 }
