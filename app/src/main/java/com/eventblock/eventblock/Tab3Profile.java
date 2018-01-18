@@ -9,19 +9,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.URLUtil;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by oscar on 8/12/17.
@@ -40,8 +50,11 @@ public class Tab3Profile extends Fragment {
         View rootView = inflater.inflate(R.layout.tab3_profile, container, false);
 
 
-        final EditText etUserName = (EditText) rootView.findViewById(R.id.etName);
-        final EditText etEmail = (EditText) rootView.findViewById(R.id.etEmail);
+        final TextView etUserName = (TextView) rootView.findViewById(R.id.etName);
+        final TextView etEmail = (TextView) rootView.findViewById(R.id.etEmail);
+
+        final TextView tvTokens = (TextView) rootView.findViewById(R.id.tv2);
+
 
         ivProfile = (ImageView) rootView.findViewById(R.id.ivPicture);
 
@@ -57,13 +70,35 @@ public class Tab3Profile extends Fragment {
         //(new DownloadImage(etUserName.getText().toString())).execute();
 
         String loc = SERVER_ADDRESS + "Upload/uploads/" + username + ".jpeg";
+        if(URLUtil.isValidUrl(loc)) {
+            Glide.with(getContext())
+                    .load(loc)
+                    .into(ivProfile);
+        }
 
-        Glide.with(getContext())
-                .load(loc)
-                .into(ivProfile);
 
 
+        Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    boolean success = jsonObject.getBoolean("success");
+                    if(success) {
+                        int tokens = jsonObject.getInt("tokens");
+                        int days = jsonObject.getInt("days");
 
+                        tvTokens.setText(tokens+"");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        TokenRequest update = new TokenRequest(username, newResponseListener);
+        queue.add(update);
 
 
         return rootView;
@@ -102,6 +137,28 @@ public class Tab3Profile extends Fragment {
                 ivProfile.setImageBitmap(bitmap);
             }
         }
+    }
+
+    public class TokenRequest extends StringRequest {
+        private static final String REGISTER_REQUEST_URL = "http://eventblock.xyz/TokensRequest.php";
+
+        private Map<String,String> params;
+
+
+        public TokenRequest (String username,Response.Listener<String> listener) {
+
+            super(Method.POST,REGISTER_REQUEST_URL,listener, null);
+
+            params = new HashMap<>();
+            params.put("username",username);
+        }
+
+        @Override
+        public Map<String, String> getParams() {
+            return params;
+        }
+
+
     }
 
 }

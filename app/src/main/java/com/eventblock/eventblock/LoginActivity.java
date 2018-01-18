@@ -455,7 +455,7 @@ public class LoginActivity extends AppCompatActivity {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.HOUR, 9);
-        calendar.set(Calendar.AM_PM, Calendar.PM);
+        calendar.set(Calendar.AM_PM, Calendar.AM);
 
         long intendedTime = calendar.getTimeInMillis();
         long currentTime = currentCal.getTimeInMillis();
@@ -465,14 +465,16 @@ public class LoginActivity extends AppCompatActivity {
         if(intendedTime >= currentTime){
             // you can add buffer time too here to ignore some small differences in milliseconds
             // set from today
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
+                    1000 * 60 * 60 * 24, pendingIntent);
+
         } else{
             // set from next day
             // you might consider using calendar.add() for adding one day to the current day
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             intendedTime = calendar.getTimeInMillis();
-
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime, AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
+                    1000 * 60 * 60 * 24, pendingIntent);
         }
         Toast.makeText(LoginActivity.this, "Starting Alarm", Toast.LENGTH_LONG).show();
 

@@ -10,73 +10,135 @@
 
     <ImageView
         android:id="@+id/ivPicture"
-        android:layout_width="123dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="9dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="11dp"
+        android:layout_marginEnd="132dp"
+        android:layout_marginStart="132dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/profile"
+        android:padding="5dp"
         app:layout_constraintBottom_toTopOf="@+id/etName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/profile" />
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="88dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="165dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="37dp"
-        android:text="Event:"
-        app:layout_constraintEnd_toStartOf="@+id/textView4"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="89dp"
-        android:layout_marginEnd="16dp"
-        android:text="Tokens:"
-        app:layout_constraintBottom_toTopOf="@+id/bGenerate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail" />
-
-    <Button
-        android:id="@+id/bGenerate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="57dp"
-        android:text="Generate!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <EditText
         android:id="@+id/etName"
-        android:layout_width="0dp"
+        android:layout_width="352dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:ems="10"
-        android:inputType="textPersonName"
+        android:layout_below="@id/ivPicture"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="26dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="11dp"
+        android:gravity="center"
+        android:text="Name"
+        android:textSize="22sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/etEmail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivPicture" />
 
-    <EditText
+    <TextView
         android:id="@+id/etEmail"
-        android:layout_width="0dp"
+        android:layout_width="352dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="37dp"
-        android:ems="10"
-        android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        android:layout_below="@+id/etName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="Email"
+        android:textSize="22sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etName" />
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="205dp"
+        android:layout_marginStart="78dp"
+        android:layout_marginTop="33dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etEmail">
+
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/colorAccent"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Events"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="205dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginTop="33dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etEmail">
+
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tokens"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="1dp"
+        android:layout_height="99dp"
+        android:layout_marginBottom="173dp"
+        android:layout_marginEnd="66dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="239dp"
+        android:background="#A9A9A9"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout3"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout4"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

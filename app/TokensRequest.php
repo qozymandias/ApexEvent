@@ -13,9 +13,10 @@
     mysqli_stmt_store_result($statement);
     mysqli_stmt_bind_result($statement, $colTokens, $colDays);
     
-    $response["success"] = true;  
-    $response["tokens"] = $colTokens;
-    $response["days"] = $colDays;
-        
+    while(mysqli_stmt_fetch($statement)){
+        $response["success"] = true;  
+        $response["tokens"] = $colTokens;
+        $response["days"] = $colDays;
+    }
     echo json_encode($response);
 ?>

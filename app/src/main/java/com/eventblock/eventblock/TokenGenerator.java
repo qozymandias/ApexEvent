@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by oscar on 16/01/18.
@@ -39,7 +40,7 @@ public class TokenGenerator {
 
         // ~~~~~~~~~~~~~~ 1 ~~~~~~~~~~~~~~~~
         // volley queue for requests
-        RequestQueue queue = Volley.newRequestQueue(this.c);
+
 
         // response listener for the token request
         Response.Listener<String> responseListener = new Response.Listener<String>() {
@@ -51,6 +52,56 @@ public class TokenGenerator {
                     if(success) {
                         tokens = jsonObject.getInt("tokens");
                         days = jsonObject.getInt("days");
+                        //Toast.makeText(c, "Updating... ", Toast.LENGTH_LONG).show();
+
+                        // ~~~~~~~~~~~~~~ 3 ~~~~~~~~~~~~~~~~
+                        // increment tokens based on algorithm
+                        Random r = new Random();
+                        // do algo stuff
+                        if(days == 1) {
+                            tokens += (20 + r.nextInt(10));
+                        } else if(days == 2) {
+                            tokens += (40 + r.nextInt(10));
+                        } else if(days == 3) {
+                            tokens += (60 + r.nextInt(10));
+                        } else if(days == 4) {
+                            tokens += (80 + r.nextInt(10));
+                        } else if(days == 5) {
+                            tokens += (100 + r.nextInt(10));
+                        } else {
+                            tokens += 20;
+                        }
+
+                        if (days >= 5) {
+                            days = 0;
+                        } else {
+                            days += 1;
+                        }
+
+
+                        // ~~~~~~~~~~~~~~ 4 ~~~~~~~~~~~~~~~~
+                        // response listener for update request
+                        Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    boolean success = jsonObject.getBoolean("success");
+                                    if(success) {
+                                        Toast.makeText(c, "Tokens increased! \nTokens = " + tokens, Toast.LENGTH_LONG).show();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+
+                        // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
+                        // update tokens
+                        RequestQueue queue = Volley.newRequestQueue(c);
+                        UpdateTokenRequest update = new UpdateTokenRequest(username, tokens, days, newResponseListener);
+                        queue.add(update);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -60,38 +111,13 @@ public class TokenGenerator {
 
         // ~~~~~~~~~~~~~~ 2 ~~~~~~~~~~~~~~~~
         // Request for tokens
+        RequestQueue queue = Volley.newRequestQueue(this.c);
         TokenRequest tokenRequest = new TokenRequest(username, responseListener);
         queue.add(tokenRequest);
 
 
-        // ~~~~~~~~~~~~~~ 3 ~~~~~~~~~~~~~~~~
-        // increment tokens based on algorithm
-        tokens += 1;
-        // do algo stuff
 
-        days += 1;
 
-        // ~~~~~~~~~~~~~~ 4 ~~~~~~~~~~~~~~~~
-        // response listener for update request
-        Response.Listener<String> newResponseListener = new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    boolean success = jsonObject.getBoolean("success");
-                    if(success) {
-                        Toast.makeText(c, "Tokens increased! \nTokens = " + tokens, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
-        // update tokens
-        UpdateTokenRequest update = new UpdateTokenRequest(username, tokens, days, newResponseListener);
-        queue.add(update);
     }
 
 
