@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-
+        final int[] receiving = {0};
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -203,6 +203,8 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
+
+
         fbLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
             private ProfileTracker mProfileTracker;
@@ -278,7 +280,8 @@ public class LoginActivity extends AppCompatActivity {
                                                     Boolean receivedTokens = false;
                                                     if(intent1 != null)
                                                         receivedTokens = intent1.getBooleanExtra("receivedTokens", false);
-                                                    if(receivedTokens) {
+                                                        receiving[0]++;
+                                                    if(receivedTokens && receiving[0] < 2) {
                                                         TokenGenerator tk = new TokenGenerator(username, LoginActivity.this);
                                                         tk.generate();
                                                     }
@@ -388,7 +391,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Boolean receivedTokens = false;
                                 if(intent1 != null)
                                     receivedTokens = intent1.getBooleanExtra("receivedTokens", false);
-                                if(receivedTokens) {
+                                    receiving[0]++;
+                                if(receivedTokens && receiving[0] < 2) {
                                     TokenGenerator tk = new TokenGenerator(username, LoginActivity.this);
                                     tk.generate();
                                 }
@@ -452,29 +456,27 @@ public class LoginActivity extends AppCompatActivity {
         Calendar currentCal = Calendar.getInstance();
 
 
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.HOUR, 9);
-        calendar.set(Calendar.AM_PM, Calendar.AM);
+        calendar.set(Calendar.SECOND, currentCal.get(Calendar.SECOND));
+        calendar.set(Calendar.MINUTE, currentCal.get(Calendar.MINUTE) + 1);
+        calendar.set(Calendar.HOUR, currentCal.get(Calendar.HOUR));
+        calendar.set(Calendar.AM_PM, currentCal.get(Calendar.AM_PM));
 
         long intendedTime = calendar.getTimeInMillis();
         long currentTime = currentCal.getTimeInMillis();
 
-
-
         if(intendedTime >= currentTime){
             // you can add buffer time too here to ignore some small differences in milliseconds
             // set from today
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
-                    1000 * 60 * 60 * 24, pendingIntent);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
+                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 
         } else{
             // set from next day
             // you might consider using calendar.add() for adding one day to the current day
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            //calendar.add(Calendar.DAY_OF_MONTH, 1);
             intendedTime = calendar.getTimeInMillis();
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
-                    1000 * 60 * 60 * 24, pendingIntent);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
+                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
         }
         Toast.makeText(LoginActivity.this, "Starting Alarm", Toast.LENGTH_LONG).show();
 
