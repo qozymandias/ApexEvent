@@ -13,14 +13,29 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BrowserActivity extends AppCompatActivity {
 
@@ -95,10 +110,13 @@ public class BrowserActivity extends AppCompatActivity {
     }
 
 
+
+
+    /** Callback function */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_browser, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.items, menu);
         return true;
     }
 
@@ -107,17 +125,73 @@ public class BrowserActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            // action with ID action_refresh was selected
+            case R.id.action_refresh:
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+                final int[] tokens = {0};
+                final int[] days = {0};
+
+                Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean success = jsonObject.getBoolean("success");
+                            if(success) {
+                                tokens[0] = jsonObject.getInt("tokens");
+                                days[0] = jsonObject.getInt("days");
+
+                                Toast.makeText(getApplicationContext(), "Tokens = " + tokens[0] + "\n"
+                                            + "Days = " + days[0], Toast.LENGTH_LONG)
+                                        .show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                TokenRequest update = new TokenRequest(username, newResponseListener);
+                queue.add(update);
+
+
+
+                break;
+            // action with ID action_settings was selected
+            case R.id.action_settings:
+                Toast.makeText(this, "Settings selected", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public class TokenRequest extends StringRequest {
+        private static final String REGISTER_REQUEST_URL = "http://eventblock.xyz/TokensRequest.php";
 
+        private Map<String,String> params;
+
+
+        public TokenRequest (String username,Response.Listener<String> listener) {
+
+            super(Method.POST,REGISTER_REQUEST_URL,listener, null);
+
+            params = new HashMap<>();
+            params.put("username",username);
+        }
+
+        @Override
+        public Map<String, String> getParams() {
+            return params;
+        }
+
+
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

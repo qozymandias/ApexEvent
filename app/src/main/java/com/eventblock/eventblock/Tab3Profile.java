@@ -139,6 +139,41 @@ public class Tab3Profile extends Fragment {
         }
     }
 
+    public class FBDownloadImage extends AsyncTask<Void, Void, Bitmap> {
+
+        String name;
+
+        public FBDownloadImage(String name) {
+            this.name = name;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+
+            String url = SERVER_ADDRESS + "Upload/uploads/" + name + ".png";
+
+            try {
+                URLConnection con = new URL(url).openConnection();
+                con.setConnectTimeout(1000*30);
+                con.setReadTimeout(1000*30);
+                return BitmapFactory.decodeStream((InputStream) con.getContent(), null, null) ;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if(bitmap != null) {
+                ivProfile.setImageBitmap(bitmap);
+            }
+        }
+    }
+
     public class TokenRequest extends StringRequest {
         private static final String REGISTER_REQUEST_URL = "http://eventblock.xyz/TokensRequest.php";
 

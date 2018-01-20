@@ -14,6 +14,26 @@
     $localized_multi_line_address_display = $_POST["localized_multi_line_address_display"]; 
 
 
+    function createTable() {
+
+        global $connect, $event_name;
+
+        $statement - mysqli_prepare("CREATE TABLE `event_rankings_".$event_name."' (
+                                      `id` int(6) NOT NULL,
+                                      `event_name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+                                      `user_and_ranking` varchar(60) COLLATE utf8_unicode_ci NOT NULL
+                                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+        mysqli_stmt_execute($statement);
+        mysqli_stmt_close($statement); 
+
+
+        $new_statement = mysqli_prepare($connect, "INSERT INTO events (event_name) VALUES (?)");
+
+        mysqli_stmt_bind_param($new_statement, "s", $event_name);
+        
+        mysqli_stmt_execute($new_statement);
+        mysqli_stmt_close($new_statement);
+    }
 
 
     function registerEvent() {
@@ -36,6 +56,7 @@
 
     
     registerEvent();
+    createTable();
     $response["success"] = true;
     
     echo json_encode($response);

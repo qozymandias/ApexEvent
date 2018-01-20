@@ -60,9 +60,13 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
         eventList = new ArrayList<Event>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        loadEvents();
+        BrowserActivity activity = (BrowserActivity) getActivity();
+        assert activity != null;
+        String username = activity.getMyData();
+
+        loadEvents(username);
     }
 
     @Override
@@ -70,7 +74,7 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
 
-    private void loadEvents() {
+    private void loadEvents(final String username) {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, SERVER_ADDRESS,
                 new Response.Listener<String>() {
                     @Override
@@ -100,7 +104,7 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
 
                             }
 
-                            adapter = new EventAdapter(getActivity().getApplicationContext(), eventList);
+                            adapter = new EventAdapter(username,getActivity(), eventList);
                             recyclerView.setAdapter(adapter);
 
                         } catch (JSONException e) {

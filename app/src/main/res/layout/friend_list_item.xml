@@ -40,6 +40,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"/>
 
+
             <TextView
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
