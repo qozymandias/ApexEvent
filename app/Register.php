@@ -18,7 +18,7 @@
         $tokens = 0;
         $days = 0;
         $statement = mysqli_prepare($connect, "INSERT INTO users (name, username, age, password, email, hash, active, fb_id, tokens, days) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        mysqli_stmt_bind_param($statement, "ssisssii", $name, $username, $age, $passwordHash, $email, $hash, $active, $fb_id, $tokens, $days);
+        mysqli_stmt_bind_param($statement, "ssisssiiii", $name, $username, $age, $passwordHash, $email, $hash, $active, $fb_id, $tokens, $days);
         mysqli_stmt_execute($statement);
         mysqli_stmt_close($statement);     
     }

@@ -148,6 +148,33 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                                                                 queue.add(update);
 
 
+                                                                            } else {
+
+                                                                                int new_tokens = Integer.parseInt(String.valueOf(input.getText()));
+
+
+                                                                                Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+                                                                                    @Override
+                                                                                    public void onResponse(String response) {
+                                                                                        try {
+                                                                                            JSONObject jsonObject = new JSONObject(response);
+                                                                                            boolean success = jsonObject.getBoolean("success");
+                                                                                            if(success) {
+                                                                                                Toast.makeText(mCtx,"Donating: " + input.getText()
+                                                                                                        + "\nTokens remaining: " + t[0], Toast.LENGTH_LONG)
+                                                                                                        .show();
+                                                                                            }
+                                                                                        } catch (JSONException e) {
+                                                                                            e.printStackTrace();
+                                                                                        }
+                                                                                    }
+                                                                                };
+
+                                                                                // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
+                                                                                // update tokens
+                                                                                RequestQueue queue = Volley.newRequestQueue(mCtx);
+                                                                                UpdateEventRanking update = new UpdateEventRanking(username, String.valueOf(holder.textViewTitle.getText()),new_tokens , newResponseListener);
+                                                                                queue.add(update);
                                                                             }
                                                                         } catch (JSONException e) {
                                                                             e.printStackTrace();
@@ -223,6 +250,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public int getItemCount() {
         return eventList.size();
     }
+
     class EventViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;

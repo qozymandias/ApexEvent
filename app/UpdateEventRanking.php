@@ -31,7 +31,7 @@
 
 
     } else {
-        $new_new_statement = mysqli_prepare($connect, "INSERT INTO event_rankings_$event (event_name, user, tokens) VALUES (?, ?, ?)");
+        $new_new_statement = mysqli_prepare($con, "INSERT INTO event_rankings_$event (event_name, user, tokens) VALUES (?, ?, ?)");
         mysqli_stmt_bind_param($new_new_statement, "ssi", $event, $username, $tokens);
         mysqli_stmt_execute($new_new_statement);
         mysqli_stmt_close($new_new_statement); 

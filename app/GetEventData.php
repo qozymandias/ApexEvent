@@ -27,8 +27,7 @@
         $response["tokens"] = $tokens;
 
     }     
-    $response["success"] = true; 
-        $response["tokens"] = 0;
+    
 
     echo json_encode($response);
 ?>
