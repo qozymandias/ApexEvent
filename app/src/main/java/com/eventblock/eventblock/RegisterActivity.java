@@ -258,7 +258,7 @@ public class RegisterActivity extends AppCompatActivity {
                     etEmail.setError("Invalid Email");
                     etEmail.requestFocus();
                 } else if (!validatePassword(password)) {
-                    etPassword.setError("Invalid Password");
+                    etPassword.setError("Invalid Password must be greater than 9");
                     etPassword.requestFocus();
                 } else if (!password.equals(passwordConfirm)) {
                     etPasswordConfirm.setError("Password does not match");
