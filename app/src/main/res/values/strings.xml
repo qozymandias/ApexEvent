@@ -28,6 +28,7 @@
 
     <string name="facebook_app_id">2008305832761584</string>
     <string name="fb_login_protocol_scheme">fb2008305832761584</string>
+    <string name="title_activity_event">EventActivity</string>
 
 
 </resources>

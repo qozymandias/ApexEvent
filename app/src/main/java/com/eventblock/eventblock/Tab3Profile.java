@@ -1,11 +1,13 @@
 package com.eventblock.eventblock;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.AdRequest;
 
 /**
  * Created by oscar on 8/12/17.
@@ -44,10 +51,27 @@ public class Tab3Profile extends Fragment {
 
     private ImageView ivProfile;
 
+    private InterstitialAd mInterstitialAd;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.tab3_profile, container, false);
+
+       /* MobileAds.initialize(getContext(),
+                "ca-app-pub-8973064271753069~7703689269");
+
+        mInterstitialAd = new InterstitialAd(getContext());
+        mInterstitialAd.setAdUnitId("ca-app-pub-8973064271753069/3078048549");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());*/
+
+
+        MobileAds.initialize(getContext(),
+                "ca-app-pub-8973064271753069~7703689269");
+
+        mInterstitialAd = new InterstitialAd(getContext());
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
 
 
         final TextView etUserName = (TextView) rootView.findViewById(R.id.etName);
@@ -55,12 +79,13 @@ public class Tab3Profile extends Fragment {
 
         final TextView tvTokens = (TextView) rootView.findViewById(R.id.tv2);
 
+        final Button bGenerate = rootView.findViewById(R.id.button3);
 
         ivProfile = (ImageView) rootView.findViewById(R.id.ivPicture);
 
         BrowserActivity activity = (BrowserActivity) getActivity();
         assert activity != null;
-        String username = activity.getMyData();
+        final String username = activity.getMyData();
         String email = activity.getEmail();
 
 
@@ -101,7 +126,98 @@ public class Tab3Profile extends Fragment {
         queue.add(update);
 
 
+        bGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            boolean success = jsonObject.getBoolean("success");
+                            if(success) {
+                                int tokens = jsonObject.getInt("tokens");
+                                int days = jsonObject.getInt("days");
+
+                                if (mInterstitialAd.isLoaded()) {
+                                    mInterstitialAd.show();
+
+                                    Random r = new Random();
+
+                                    tokens += r.nextInt(10);
+
+
+                                    final int finalTokens = tokens;
+                                    Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            try {
+                                                JSONObject jsonObject = new JSONObject(response);
+                                                boolean success = jsonObject.getBoolean("success");
+                                                if(success) {
+                                                    Toast.makeText(getContext(), "Tokens increased! \nTokens = " + finalTokens, Toast.LENGTH_LONG).show();
+
+                                                    android.support.v4.app.FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                                    ft.detach(Tab3Profile.this).attach(Tab3Profile.this).commit();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    };
+
+                                    // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
+                                    // update tokens
+                                    RequestQueue queue = Volley.newRequestQueue(getContext());
+                                    UpdateTokenRequest update = new UpdateTokenRequest(username, tokens, days, newResponseListener);
+                                    queue.add(update);
+
+                                } else {
+                                    Log.d("TAG", "The interstitial wasn't loaded yet.");
+                                }
+
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                RequestQueue queue = Volley.newRequestQueue(getContext());
+                TokenRequest update = new TokenRequest(username, newResponseListener);
+                queue.add(update);
+            }
+        });
+
+
+
         return rootView;
+    }
+
+    public class UpdateTokenRequest extends StringRequest {
+        private static final String REGISTER_REQUEST_URL = "http://eventblock.xyz/UpdateTokensRequest.php";
+
+        private Map<String,String> params;
+
+
+        public UpdateTokenRequest (String username, int tokens, int days, Response.Listener<String> listener) {
+
+            super(Method.POST,REGISTER_REQUEST_URL,listener, null);
+
+            params = new HashMap<>();
+            params.put("username",username);
+            params.put("tokens",tokens +"");
+            params.put("days",days +"");
+        }
+
+        @Override
+        public Map<String, String> getParams() {
+            return params;
+        }
+
+
     }
 
     public class DownloadImage extends AsyncTask<Void, Void, Bitmap> {

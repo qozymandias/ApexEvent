@@ -18,28 +18,20 @@
 
         global $connect, $event_name;
 
-        $statement - mysqli_prepare("CREATE TABLE `event_rankings_".$event_name."' (
-                                      `id` int(6) NOT NULL,
-                                      `event_name` varchar(60) COLLATE utf8_unicode_ci NOT NULL,
-                                      `user_and_ranking` varchar(60) COLLATE utf8_unicode_ci NOT NULL
+        $statement = mysqli_prepare($connect, "CREATE TABLE event_rankings_$event_name (
+                                      id int(6) NOT NULL,
+                                      event_name varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+                                      user varchar(60) COLLATE utf8_unicode_ci NOT NULL,
+                                      tokens bigint(20) NOT NULL
                                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
         mysqli_stmt_execute($statement);
         mysqli_stmt_close($statement); 
-
-
-        $new_statement = mysqli_prepare($connect, "INSERT INTO events (event_name) VALUES (?)");
-
-        mysqli_stmt_bind_param($new_statement, "s", $event_name);
-        
-        mysqli_stmt_execute($new_statement);
-        mysqli_stmt_close($new_statement);
     }
 
 
     function registerEvent() {
         global $connect, $event_name, $description, $capacity, $start_time, $end_time ,
             $is_free, $venue_name, $venue_lattitude, $venue_longitude , $localized_multi_line_address_display;
-
 
 
         $statement = mysqli_prepare($connect, "INSERT INTO events (event_name, description, capacity, start_time, end_time, is_free, venue_name, venue_lattitude, venue_longitude , localized_multi_line_address_display) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");

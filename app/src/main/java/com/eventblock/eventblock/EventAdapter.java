@@ -1,11 +1,14 @@
 package com.eventblock.eventblock;
 
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +24,21 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Created by oscar on 19/12/17.
@@ -66,14 +78,75 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         holder.textViewTitle.setText(event.getEvent_name());
         holder.textViewDesc.setText(event.getDescription());
         holder.imageView.setImageResource(R.drawable.event_stock);
+
         holder.textViewCapacity.setText(String.valueOf(event.getCapacity()));
-        holder.textViewRanking.setText(R.string.Unavailable);
+
+        final String[] rank = new String[1];
+
+        Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONArray array = new JSONArray(response);
+                    if(array != null) {
+                        Log.v("jsonarray","success" );
+                        HashMap<String, Integer> results = new HashMap<String, Integer>();
+
+                        for(int i = 0; i < array.length(); i++) {
+
+                            JSONObject jsonobject = array.getJSONObject(i);
+
+                            results.put(jsonobject.getString("user"),jsonobject.getInt("tokens"));
+
+                            Log.v("jsonname",jsonobject.getString("user") );
+                        }
+
+
+                        List<Map.Entry<String,Integer>> list = new LinkedList<Map.Entry<String,Integer>>(results.entrySet());
+                        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                            @Override
+                            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+
+                                return o1.getValue().compareTo(o2.getValue());
+
+                            }
+                        });
+
+                        Log.v("jsonsorted","sorted");
+
+                        int i = list.size();
+                        for(Map.Entry<String, Integer> item : list) {
+
+                            Log.v("jsonrankname",item.getKey());
+                            if(item.getKey().equals(username)) {
+                                rank[0] = String.valueOf(i);
+                                Log.v("jsonrank",i+"");
+                            }
+                            i--;
+
+                        }
+                        holder.textViewRanking.setText(rank[0] + " / " + list.size());
+
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
+        // update tokens
+        RequestQueue queue = Volley.newRequestQueue(mCtx);
+        GetEventRanks update = new GetEventRanks(String.valueOf(holder.textViewTitle.getText()), newResponseListener);
+        queue.add(update);
+
+
+
+
         holder.bDonte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
 
                 Response.Listener<String> newResponseListener = new Response.Listener<String>() {
                     @Override
@@ -134,7 +207,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                                                                                 Toast.makeText(mCtx,"Donating: " + input.getText()
                                                                                                         + "\nTokens remaining: " + t[0], Toast.LENGTH_LONG)
                                                                                                         .show();
-                                                                                            }
+
+                                                                                                                                                                                            }
                                                                                         } catch (JSONException e) {
                                                                                             e.printStackTrace();
                                                                                         }
@@ -251,6 +325,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return eventList.size();
     }
 
+
+
     class EventViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
@@ -281,6 +357,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
             params = new HashMap<>();
             params.put("username",username);
+        }
+
+        @Override
+        public Map<String, String> getParams() {
+            return params;
+        }
+
+
+    }
+
+    public class GetEventRanks extends StringRequest {
+        private static final String REGISTER_REQUEST_URL = "http://eventblock.xyz/GetEventRanks.php";
+
+        private Map<String,String> params;
+
+
+        public GetEventRanks (String event,Response.Listener<String> listener) {
+
+            super(Method.POST,REGISTER_REQUEST_URL,listener, null);
+
+            params = new HashMap<>();
+            params.put("event", event);
         }
 
         @Override

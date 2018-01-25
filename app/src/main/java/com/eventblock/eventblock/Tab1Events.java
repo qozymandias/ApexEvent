@@ -1,10 +1,14 @@
 package com.eventblock.eventblock;
 
+import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +53,36 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
         view = rootView;
 
 
+        final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
+
+        swipeView.setColorScheme(android.R.color.holo_blue_dark, android.R.color.holo_blue_light, android.R.color.holo_green_light, android.R.color.holo_green_dark);
+        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                swipeView.setRefreshing(true);
+
+                ( new Handler()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        eventList = new ArrayList<Event>();
+                        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+                        BrowserActivity activity = (BrowserActivity) getActivity();
+                        assert activity != null;
+                        String username = activity.getMyData();
+
+                        loadEvents(username);
+
+                        swipeView.setRefreshing(false);
+                    }
+                }, 3000);
+            }
+        });
+
+
 
         return rootView;
     }
@@ -64,7 +98,24 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
 
         BrowserActivity activity = (BrowserActivity) getActivity();
         assert activity != null;
-        String username = activity.getMyData();
+        final String username = activity.getMyData();
+
+
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        // do whatever
+                        Intent nextIntent = new Intent(getActivity(), EventActivity.class);
+                        nextIntent.putExtra("username", username);
+                        nextIntent.putExtra("event", eventList.get(position).getEvent_name());
+                        getActivity().startActivity(nextIntent);
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
 
         loadEvents(username);
     }
