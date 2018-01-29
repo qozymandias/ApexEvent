@@ -468,7 +468,7 @@ public class LoginActivity extends AppCompatActivity {
             // you can add buffer time too here to ignore some small differences in milliseconds
             // set from today
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
-                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                    AlarmManager.INTERVAL_DAY, pendingIntent);
 
         } else{
             // set from next day
@@ -476,7 +476,7 @@ public class LoginActivity extends AppCompatActivity {
             //calendar.add(Calendar.DAY_OF_MONTH, 1);
             intendedTime = calendar.getTimeInMillis();
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
-                    AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                    AlarmManager.INTERVAL_DAY, pendingIntent);
         }
         Toast.makeText(LoginActivity.this, "Starting Alarm", Toast.LENGTH_LONG).show();
 

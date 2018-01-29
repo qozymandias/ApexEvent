@@ -88,7 +88,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             public void onResponse(String response) {
                 try {
                     JSONArray array = new JSONArray(response);
-                    if(array != null) {
+                    if(array != null && array.length() > 0) {
                         Log.v("jsonarray","success" );
                         HashMap<String, Integer> results = new HashMap<String, Integer>();
 

@@ -13,6 +13,9 @@
 
     $tokens = 0;
 
+    $event = preg_replace('/\s+/', '', $event);
+    $event = preg_replace('/[^a-zA-Z0-9]/', '', $event);
+
     $statement = mysqli_prepare($con, "SELECT tokens FROM event_rankings_$event WHERE user = ?");
 
     mysqli_stmt_bind_param($statement, "s", $username);

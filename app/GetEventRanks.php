@@ -5,6 +5,9 @@
 
     $event = $_POST["event"];
 
+    $event = preg_replace('/\s+/', '', $event);
+    $event = preg_replace('/[^a-zA-Z0-9]/', '', $event);
+
     $statement = mysqli_query($con, "SELECT * FROM event_rankings_$event");
 
 

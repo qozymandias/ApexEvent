@@ -12,6 +12,9 @@
     $event = $_POST["event"];
     $tokens = $_POST["tokens"];
 
+    $event = preg_replace('/\s+/', '', $event);
+    $event = preg_replace('/[^a-zA-Z0-9]/', '', $event);
+
 
 
     $statement = mysqli_prepare($con, "SELECT * FROM event_rankings_$event WHERE user = ?");

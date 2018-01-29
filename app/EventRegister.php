@@ -14,9 +14,29 @@
     $localized_multi_line_address_display = $_POST["localized_multi_line_address_display"]; 
 
 
+    function eventAvailable() {
+        global $connect, $event_name;
+
+        $statement = mysqli_prepare($connect, "SELECT * FROM events WHERE event_name = ?"); 
+        mysqli_stmt_bind_param($statement, "s", $event_name);
+        mysqli_stmt_execute($statement);
+        mysqli_stmt_store_result($statement);
+        $count = mysqli_stmt_num_rows($statement);
+        mysqli_stmt_close($statement); 
+        if ($count < 1){
+            return true; 
+        }else {
+            return false; 
+        }
+    }
+
+
     function createTable() {
 
         global $connect, $event_name;
+
+        $event_name = preg_replace('/\s+/', '', $event_name);
+        $event_name = preg_replace('/[^a-zA-Z0-9]/', '', $event_name);
 
         $statement = mysqli_prepare($connect, "CREATE TABLE event_rankings_$event_name (
                                       id int(6) NOT NULL,
@@ -46,10 +66,11 @@
     $response = array();
     $response["success"] = false;  
 
-    
-    registerEvent();
-    createTable();
-    $response["success"] = true;
+    if(eventAvailable()) {
+        registerEvent();
+        createTable();
+        $response["success"] = true;
+    }
     
     echo json_encode($response);
 ?>

@@ -43,7 +43,7 @@ public class DeviceBootReceiver extends BroadcastReceiver {
                 // you can add buffer time too here to ignore some small differences in milliseconds
                 // set from today
                 alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
-                        AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                        AlarmManager.INTERVAL_DAY, pendingIntent);
 
             } else{
                 // set from next day
@@ -51,7 +51,7 @@ public class DeviceBootReceiver extends BroadcastReceiver {
                 //calendar.add(Calendar.DAY_OF_MONTH, 1);
                 intendedTime = calendar.getTimeInMillis();
                 alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, intendedTime,
-                        AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                        AlarmManager.INTERVAL_DAY, pendingIntent);
             }
             Toast.makeText(context, "Starting Alarm", Toast.LENGTH_LONG).show();
 

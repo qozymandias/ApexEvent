@@ -43,8 +43,8 @@
 
     <TextView
         android:id="@+id/tvCapacity3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="123dp"
+        android:layout_height="58dp"
         android:layout_alignBaseline="@+id/tvRanking"
         android:layout_alignBottom="@+id/tvRanking"
         android:layout_alignLeft="@+id/textView4"
@@ -62,12 +62,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginEnd="29dp"
-        android:layout_marginTop="94dp"
+        android:layout_marginTop="250dp"
         android:text="Venue:"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivPicture" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
@@ -86,8 +86,8 @@
 
     <TextView
         android:id="@+id/tvRanking2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="132dp"
+        android:layout_height="103dp"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="29dp"
         android:layout_toEndOf="@+id/textView4"
@@ -160,8 +160,8 @@
         android:layout_above="@+id/tvRanking"
         android:layout_alignLeft="@+id/tvRanking"
         android:layout_alignStart="@+id/tvRanking"
-        android:layout_marginEnd="29dp"
-        android:layout_marginTop="41dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginTop="2dp"
         android:text="Location:"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -213,7 +213,7 @@
         android:text="Description"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
         android:textColor="@android:color/black"
-        android:textSize="16sp"
+        android:textSize="10sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -240,23 +240,23 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="94dp"
+        android:layout_marginTop="250dp"
         android:text="Capacity:"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivPicture" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvRanking"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="19dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="15dp"
+        android:layout_marginEnd="25dp"
         android:layout_toEndOf="@+id/textView4"
         android:layout_toRightOf="@+id/textView4"
         android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintEnd_toStartOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <TextView
@@ -266,25 +266,26 @@
         android:layout_above="@+id/tvRanking"
         android:layout_alignLeft="@+id/tvRanking"
         android:layout_alignStart="@+id/tvRanking"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="41dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="250dp"
         android:text="Ranking:"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toBottomOf="@+id/etDesc" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         android:id="@+id/view"
         android:layout_width="1dp"
         android:layout_height="220dp"
-        android:layout_marginEnd="150dp"
-        android:layout_marginStart="30dp"
+        android:layout_marginBottom="47dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="244dp"
         android:background="#A9A9A9"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
