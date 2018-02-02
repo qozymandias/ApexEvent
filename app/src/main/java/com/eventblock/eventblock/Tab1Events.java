@@ -1,5 +1,6 @@
 package com.eventblock.eventblock;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +47,7 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
     EventAdapter adapter;
     List<Event> eventList;
     View view;
+    Context ctx;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +55,36 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
         View rootView = inflater.inflate(R.layout.tab1_events, container, false);
         view = rootView;
 
+        ctx = getActivity();
+
+
+
+
+
+
+
+
+
+        return rootView;
+    }
+
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        eventList = new ArrayList<Event>();
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setNestedScrollingEnabled(false);
+
+        BrowserActivity activity = (BrowserActivity) getActivity();
+        assert activity != null;
+        final String username = activity.getMyData();
+
+        loadEvents(username);
 
         final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
 
@@ -65,10 +98,18 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
                 ( new Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
+                        deleteCache(getActivity());
+
+                        eventList.clear(); //clear list
+                        adapter.notifyDataSetChanged();
+
+
                         eventList = new ArrayList<Event>();
                         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recyclerView.setNestedScrollingEnabled(false);
 
                         BrowserActivity activity = (BrowserActivity) getActivity();
                         assert activity != null;
@@ -78,52 +119,65 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
 
                         swipeView.setRefreshing(false);
                     }
-                }, 3000);
+                }, 2000);
             }
         });
 
-
-
-        return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        eventList = new ArrayList<Event>();
-        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        BrowserActivity activity = (BrowserActivity) getActivity();
-        assert activity != null;
-        final String username = activity.getMyData();
-
-
+        /*
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getActivity(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
+                        // do whatever
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
                         // do whatever
                         Intent nextIntent = new Intent(getActivity(), EventActivity.class);
                         nextIntent.putExtra("username", username);
                         nextIntent.putExtra("event", eventList.get(position).getEvent_name());
                         getActivity().startActivity(nextIntent);
                     }
-
-                    @Override public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
                 })
-        );
-
-        loadEvents(username);
+        );*/
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
     }
+
+    public void swap(ArrayList<Event> datas)
+    {
+        
+        adapter.notifyDataSetChanged();
+
+    }
+
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+
 
     private void loadEvents(final String username) {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, SERVER_ADDRESS,
@@ -168,13 +222,13 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity().getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ctx, error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
         );
 
 
-        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        RequestQueue queue = Volley.newRequestQueue(ctx);
         queue.add(stringRequest);
 
 

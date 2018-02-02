@@ -44,6 +44,8 @@ public class EventActivity extends AppCompatActivity {
 
     private static final String SERVER_ADDRESS = "http://eventblock.xyz/fetchEvents.php";
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +76,7 @@ public class EventActivity extends AppCompatActivity {
 
         final String[] rank = new String[1];
 
-
+        Toast.makeText(this, "Item: " + getIntent().getStringExtra("event"), Toast.LENGTH_SHORT).show();
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
 
@@ -394,6 +396,19 @@ public class EventActivity extends AppCompatActivity {
 
 
     }
+
+    /*@Override
+    public void onBackPressed() {
+
+        getIntent().removeExtra("username");
+        getIntent().removeExtra("event");
+
+        Intent intent = new Intent(this, BrowserActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+        EventActivity.this.finish();
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

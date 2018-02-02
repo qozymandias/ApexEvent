@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.bumptech.glide.Glide;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -71,77 +74,165 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
     @Override
-    public void onBindViewHolder(final EventViewHolder holder, int position) {
+    public void onBindViewHolder(final EventViewHolder holder, final int position) {
 
-        Event event = eventList.get(position);
+        final Event event = eventList.get(position);
 
         holder.textViewTitle.setText(event.getEvent_name());
         holder.textViewDesc.setText(event.getDescription());
+
+
         holder.imageView.setImageResource(R.drawable.event_stock);
 
         holder.textViewCapacity.setText(String.valueOf(event.getCapacity()));
 
         final String[] rank = new String[1];
 
-        Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+        updateRanks(rank, holder);
+
+
+
+
+
+        holder.bInfo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(String response) {
-                try {
-                    JSONArray array = new JSONArray(response);
-                    if(array != null && array.length() > 0) {
-                        Log.v("jsonarray","success" );
-                        HashMap<String, Integer> results = new HashMap<String, Integer>();
+            public void onClick(View view) {
+                /*
+                Intent nextIntent = new Intent(mCtx, EventActivity.class);
+                nextIntent.putExtra("username", username);
+                nextIntent.putExtra("event", event.getEvent_name());
+                mCtx.startActivity(nextIntent);
+                */
 
-                        for(int i = 0; i < array.length(); i++) {
 
-                            JSONObject jsonobject = array.getJSONObject(i);
+                LayoutInflater inflater = LayoutInflater.from(mCtx);
+                View v = inflater.inflate(R.layout.dialog_layout, null);
 
-                            results.put(jsonobject.getString("user"),jsonobject.getInt("tokens"));
 
-                            Log.v("jsonname",jsonobject.getString("user") );
+                AlertDialog.Builder builder = new AlertDialog.Builder(mCtx);
+                builder.setTitle(holder.textViewTitle.getText());
+                builder.setMessage(holder.textViewDesc.getText());
+
+                ImageView imageView = v.findViewById(R.id.ivEventPicture);
+                TextView textViewCapacity = v.findViewById(R.id.textViewCapacity);
+                TextView textViewStartTime = v.findViewById(R.id.textViewStartTime);
+                TextView textViewEndTime = v.findViewById(R.id.textViewEndTime);
+                TextView textViewCost = v.findViewById(R.id.textViewCost);
+                TextView textViewVenue = v.findViewById(R.id.textViewVenue);
+                TextView textViewLocation = v.findViewById(R.id.textViewLocation);
+                final TextView textViewRanking = v.findViewById(R.id.textViewRanking);
+
+
+                imageView.setImageResource(R.drawable.event_stock);
+
+                textViewCapacity.setText("Capacity: " + String.valueOf(event.getCapacity()));
+                textViewStartTime.setText("Start Time: " + event.getStart_time());
+                textViewEndTime.setText("End Time: " + event.getEnd_time());
+
+                textViewCost.setText("Cost: " + event.getIs_free());
+                textViewVenue.setText("Venue: " + event.getVenue_name());
+                textViewLocation.setText("Location: " + event.getLocalized_multi_line_address_display());
+
+
+                final String[] rank = new String[1];
+                Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String crappyPrefix = "null";
+
+                            if(response.startsWith(crappyPrefix)){
+                                response = response.substring(crappyPrefix.length(), response.length());
+                            }
+
+                            JSONArray array = new JSONArray(response);
+
+                            Log.v("jsonarray","success" );
+                            HashMap<String, Integer> results = new HashMap<String, Integer>();
+
+                            for(int i = 0; i < array.length(); i++) {
+
+                                JSONObject jsonobject = array.getJSONObject(i);
+
+                                results.put(jsonobject.getString("user"),jsonobject.getInt("tokens"));
+
+                                Log.v("jsonname",jsonobject.getString("user") );
+                            }
+
+
+                            List<Map.Entry<String,Integer>> list = new LinkedList<Map.Entry<String,Integer>>(results.entrySet());
+                            Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                                @Override
+                                public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+
+                                    return o1.getValue().compareTo(o2.getValue());
+
+                                }
+                            });
+
+                            Log.v("jsonsorted","sorted");
+
+                            int i = list.size();
+                            for(Map.Entry<String, Integer> item : list) {
+
+                                Log.v("jsonrankname",item.getKey());
+
+                                if(item.getKey().equals(username)) {
+                                    rank[0] = String.valueOf(i);
+                                    Log.v("jsonrank",i+"");
+                                }
+                                i--;
+
+                            }
+                            textViewRanking.setText(rank[0] + " / " + list.size());
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            e.getCause();
                         }
+                    }
+                };
+
+                RequestQueue queue = Volley.newRequestQueue(mCtx);
+                GetEventRanks update = new GetEventRanks(String.valueOf(holder.textViewTitle.getText()), newResponseListener);
+                queue.add(update);
 
 
-                        List<Map.Entry<String,Integer>> list = new LinkedList<Map.Entry<String,Integer>>(results.entrySet());
-                        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+
+                builder.setCancelable(false);
+                builder.setView(v);
+
+                builder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
                             @Override
-                            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                            public void onClick(DialogInterface dialog, int which) {
+                                //ok
 
-                                return o1.getValue().compareTo(o2.getValue());
 
+                                dialog.dismiss();
                             }
                         });
 
-                        Log.v("jsonsorted","sorted");
 
-                        int i = list.size();
-                        for(Map.Entry<String, Integer> item : list) {
-
-                            Log.v("jsonrankname",item.getKey());
-                            if(item.getKey().equals(username)) {
-                                rank[0] = String.valueOf(i);
-                                Log.v("jsonrank",i+"");
+                builder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // negative button logic
+                                dialog.dismiss();
                             }
-                            i--;
+                        });
 
-                        }
-                        holder.textViewRanking.setText(rank[0] + " / " + list.size());
+                AlertDialog dialog = builder.create();
+                // display dialog
+                dialog.show();
 
-                    }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+
             }
-        };
-
-        // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
-        // update tokens
-        RequestQueue queue = Volley.newRequestQueue(mCtx);
-        GetEventRanks update = new GetEventRanks(String.valueOf(holder.textViewTitle.getText()), newResponseListener);
-        queue.add(update);
-
-
+        });
 
 
         holder.bDonte.setOnClickListener(new View.OnClickListener() {
@@ -318,7 +409,89 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                 .load(event.getProfilePic())
                 .into(holder.imageView);*/
 
+
+
+
     }
+
+    public void updateRanks(final String[] rank, final EventViewHolder holder ) {
+        Response.Listener<String> newResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+
+                    String crappyPrefix = "null";
+
+                    if(response.startsWith(crappyPrefix)){
+                        response = response.substring(crappyPrefix.length(), response.length());
+                    }
+                    //JSONObject jo = new JSONObject(result);
+
+
+                    JSONObject jo = new JSONObject(response);
+                    JSONArray array = jo.getJSONArray("data");
+                    JSONObject jsonobject = null;
+
+
+
+
+                        Log.v("jsonarray", "success");
+                        Log.v("jsonresponse", String.valueOf(array));
+                        HashMap<String, Integer> results = new HashMap<String, Integer>();
+
+                        for (int i = 0; i < array.length(); i++) {
+
+                            jsonobject = array.getJSONObject(i);
+
+                            results.put(jsonobject.getString("user"), jsonobject.getInt("tokens"));
+
+                            Log.v("jsonname", jsonobject.getString("user"));
+                        }
+
+
+                        List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(results.entrySet());
+                        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+                            @Override
+                            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+
+                                return o1.getValue().compareTo(o2.getValue());
+
+                            }
+                        });
+
+                        Log.v("jsonsorted", "sorted");
+
+                        int i = list.size();
+                        for (Map.Entry<String, Integer> item : list) {
+
+                            Log.v("jsonrankname", item.getKey());
+                            if (item.getKey().equals(username)) {
+                                rank[0] = String.valueOf(i);
+                                Log.v("jsonrank", i + "");
+                            }
+                            i--;
+
+                        }
+                        holder.textViewRanking.setText(rank[0] + " / " + list.size());
+
+
+
+
+                } catch (JSONException e) {
+                    holder.textViewRanking.setText("null");
+                    e.printStackTrace();
+
+                }
+            }
+        };
+
+        // ~~~~~~~~~~~~~~ 5 ~~~~~~~~~~~~~~~~
+        // update tokens
+        RequestQueue queue = Volley.newRequestQueue(mCtx);
+        GetEventRanks update = new GetEventRanks(String.valueOf(holder.textViewTitle.getText()), newResponseListener);
+        queue.add(update);
+    }
+
 
     @Override
     public int getItemCount() {
@@ -331,7 +504,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
         ImageView imageView;
         TextView textViewTitle, textViewDesc, textViewCapacity, textViewRanking;
-        Button bDonte;
+        Button bDonte, bInfo;
 
         public EventViewHolder(View itemView) {
             super(itemView);
@@ -341,7 +514,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             textViewDesc = itemView.findViewById(R.id.etDesc);
             textViewCapacity = itemView.findViewById(R.id.tvCapacity);
             textViewRanking = itemView.findViewById(R.id.tvRanking);
-            bDonte = itemView.findViewById(R.id.button2);
+            bDonte = itemView.findViewById(R.id.button5);
+            bInfo = itemView.findViewById(R.id.button2);
         }
     }
 
