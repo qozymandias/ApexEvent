@@ -245,6 +245,7 @@ public class EventActivity extends AppCompatActivity {
                                                                                                             RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                                                                                                             Intent intent = getIntent();
                                                                                                             UpdateEventRanking update = new UpdateEventRanking(intent.getStringExtra("username"), String.valueOf(textViewTitle.getText()),new_tokens , newResponseListener);
+                                                                                                            update.setShouldCache(false);
                                                                                                             queue.add(update);
 
 
@@ -279,6 +280,7 @@ public class EventActivity extends AppCompatActivity {
                                                                                                             RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                                                                                                             Intent intent = getIntent();
                                                                                                             UpdateEventRanking update = new UpdateEventRanking(intent.getStringExtra("username"), String.valueOf(textViewTitle.getText()),new_tokens , newResponseListener);
+                                                                                                            update.setShouldCache(false);
                                                                                                             queue.add(update);
                                                                                                         }
                                                                                                     } catch (JSONException e) {
@@ -292,6 +294,7 @@ public class EventActivity extends AppCompatActivity {
                                                                                             RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                                                                                             Intent intent = getIntent();
                                                                                             GetEventData update = new GetEventData(String.valueOf(textViewTitle.getText()),intent.getStringExtra("username"), newResponseListener);
+                                                                                            update.setShouldCache(false);
                                                                                             queue.add(update);
 
 
@@ -307,6 +310,7 @@ public class EventActivity extends AppCompatActivity {
                                                                             RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                                                                             Intent intent = getIntent();
                                                                             UpdateTokenRequest update = new UpdateTokenRequest(intent.getStringExtra("username"), t[0], days, newResponseListener);
+                                                                            update.setShouldCache(false);
                                                                             queue.add(update);
 
 
@@ -338,6 +342,7 @@ public class EventActivity extends AppCompatActivity {
                                                     RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                                                     Intent intent = getIntent();
                                                     TokenRequest update = new TokenRequest(intent.getStringExtra("username"), newResponseListener);
+                                                    update.setShouldCache(false);
                                                     queue.add(update);
 
 
@@ -360,6 +365,7 @@ public class EventActivity extends AppCompatActivity {
 
                             RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                             GetEventRanks update = new GetEventRanks(String.valueOf(textViewTitle.getText()), newResponseListener);
+                            update.setShouldCache(false);
                             queue.add(update);
 
 
@@ -382,6 +388,7 @@ public class EventActivity extends AppCompatActivity {
         EventRequest eventRequest = new EventRequest(intent.getStringExtra("event"), responseListener);
 
         RequestQueue queue = Volley.newRequestQueue(this);
+        eventRequest.setShouldCache(false);
         queue.add(eventRequest);
 
 
@@ -453,6 +460,7 @@ public class EventActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 RequestQueue queue = Volley.newRequestQueue(EventActivity.this);
                 TokenRequest update = new TokenRequest(intent.getStringExtra("username"), newResponseListener);
+                update.setShouldCache(false);
                 queue.add(update);
 
 

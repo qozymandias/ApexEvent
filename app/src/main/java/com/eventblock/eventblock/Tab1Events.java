@@ -229,6 +229,7 @@ public class Tab1Events extends Fragment implements AdapterView.OnItemClickListe
 
 
         RequestQueue queue = Volley.newRequestQueue(ctx);
+        stringRequest.setShouldCache(false);
         queue.add(stringRequest);
 
 

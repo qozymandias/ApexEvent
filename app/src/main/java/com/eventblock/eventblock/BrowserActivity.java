@@ -154,6 +154,7 @@ public class BrowserActivity extends AppCompatActivity {
 
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
                 TokenRequest update = new TokenRequest(username, newResponseListener);
+                update.setShouldCache(false);
                 queue.add(update);
 
 

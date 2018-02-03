@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,6 +54,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private String username;
     private Context mCtx;
     private List<Event> eventList;
+
+    List<Map.Entry<String, Integer>> savedList;
+
 
     public EventAdapter(String username, Context mCtx, List<Event> eventList) {
         this.username = username;
@@ -196,6 +201,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                 RequestQueue queue = Volley.newRequestQueue(mCtx);
                 GetEventRanks update = new GetEventRanks(String.valueOf(holder.textViewTitle.getText()), newResponseListener);
+                update.setShouldCache(false);
                 queue.add(update);
 
 
@@ -310,6 +316,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                                                                 // update tokens
                                                                                 RequestQueue queue = Volley.newRequestQueue(mCtx);
                                                                                 UpdateEventRanking update = new UpdateEventRanking(username, String.valueOf(holder.textViewTitle.getText()),new_tokens , newResponseListener);
+                                                                                update.setShouldCache(false);
                                                                                 queue.add(update);
 
 
@@ -339,6 +346,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                                                                 // update tokens
                                                                                 RequestQueue queue = Volley.newRequestQueue(mCtx);
                                                                                 UpdateEventRanking update = new UpdateEventRanking(username, String.valueOf(holder.textViewTitle.getText()),new_tokens , newResponseListener);
+                                                                                update.setShouldCache(false);
                                                                                 queue.add(update);
                                                                             }
                                                                         } catch (JSONException e) {
@@ -351,6 +359,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                                                 // update tokens
                                                                 RequestQueue queue = Volley.newRequestQueue(mCtx);
                                                                 GetEventData update = new GetEventData(String.valueOf(holder.textViewTitle.getText()),username, newResponseListener);
+                                                                update.setShouldCache(false);
                                                                 queue.add(update);
 
 
@@ -365,6 +374,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                                                 // update tokens
                                                 RequestQueue queue = Volley.newRequestQueue(mCtx);
                                                 UpdateTokenRequest update = new UpdateTokenRequest(username, t[0], days, newResponseListener);
+                                                update.setShouldCache(false);
                                                 queue.add(update);
 
 
@@ -395,6 +405,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                 RequestQueue queue = Volley.newRequestQueue(mCtx);
                 TokenRequest update = new TokenRequest(username, newResponseListener);
+                update.setShouldCache(false);
                 queue.add(update);
 
 
@@ -412,6 +423,32 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
 
+
+
+    }
+
+    public static void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
     }
 
     public void updateRanks(final String[] rank, final EventViewHolder holder ) {
@@ -449,7 +486,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         }
 
 
-                        List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(results.entrySet());
+                        final List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(results.entrySet());
                         Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
                             @Override
                             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
@@ -462,6 +499,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         Log.v("jsonsorted", "sorted");
 
                         int i = list.size();
+
+                        savedList = new LinkedList<>(list);
                         for (Map.Entry<String, Integer> item : list) {
 
                             Log.v("jsonrankname", item.getKey());
@@ -473,6 +512,54 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                         }
                         holder.textViewRanking.setText(rank[0] + " / " + list.size());
+
+
+                    holder.textViewRanking.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            AlertDialog.Builder builderSingle = new AlertDialog.Builder(mCtx);
+
+                            builderSingle.setTitle("Rankings");
+
+                            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(mCtx, android.R.layout.simple_list_item_1);
+
+
+                            int i = 1;
+                            Collections.reverse(list);
+                            for (Map.Entry<String, Integer> item : list) {
+
+                                Log.v("jsonrankxxxxx", item.getKey() + "");
+
+                                arrayAdapter.add(i +". " + item.getKey() +" Tokens = " + item.getValue() );
+                                i++;
+                            }
+
+                            builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            builderSingle.setPositiveButton("okay", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+
+                            builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+                            builderSingle.show();
+
+                        }
+                    });
+
 
 
 
@@ -489,7 +576,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         // update tokens
         RequestQueue queue = Volley.newRequestQueue(mCtx);
         GetEventRanks update = new GetEventRanks(String.valueOf(holder.textViewTitle.getText()), newResponseListener);
+        update.setShouldCache(false);
         queue.add(update);
+
+
+
+
+
+
+
+
+
     }
 
 

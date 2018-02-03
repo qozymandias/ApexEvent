@@ -171,7 +171,11 @@ public class Tab2Friends extends Fragment implements AdapterView.OnItemClickList
 
                             }
 
-                            adapter = new UserAdapter(getActivity().getApplicationContext(), userList);
+                            BrowserActivity activity = (BrowserActivity) getActivity();
+                            assert activity != null;
+                            final String username = activity.getMyData();
+
+                            adapter = new UserAdapter(getActivity(), userList, username);
                             recyclerView.setAdapter(adapter);
 
                         } catch (JSONException e) {
@@ -191,6 +195,7 @@ public class Tab2Friends extends Fragment implements AdapterView.OnItemClickList
 
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        stringRequest.setShouldCache(false);
         queue.add(stringRequest);
 
 

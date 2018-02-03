@@ -199,6 +199,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     FBRegisterRequest registerRequest = new FBRegisterRequest(name,
                                             fName+"."+lName+id,20, id + "" ,
                                             email, id + "",  responseListener);
+                                    registerRequest.setShouldCache(false);
                                     queue.add(registerRequest);
 
                                 } catch (JSONException e) {
@@ -298,6 +299,7 @@ public class RegisterActivity extends AppCompatActivity {
                     RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
                     RegisterRequest registerRequest = new RegisterRequest(name,username,age,password, email, responseListener);
+                    registerRequest.setShouldCache(false);
                     queue.add(registerRequest);
 
                 }
@@ -368,6 +370,7 @@ public class RegisterActivity extends AppCompatActivity {
             RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
 
             EmailRequest emailRequest = new EmailRequest(email,username, password, responseListener);
+            emailRequest.setShouldCache(false);
             queue.add(emailRequest);
 
 

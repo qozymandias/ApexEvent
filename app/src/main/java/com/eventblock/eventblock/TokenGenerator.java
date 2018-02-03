@@ -100,6 +100,7 @@ public class TokenGenerator {
                         // update tokens
                         RequestQueue queue = Volley.newRequestQueue(c);
                         UpdateTokenRequest update = new UpdateTokenRequest(username, tokens, days, newResponseListener);
+                        update.setShouldCache(false);
                         queue.add(update);
 
                     }
@@ -113,6 +114,7 @@ public class TokenGenerator {
         // Request for tokens
         RequestQueue queue = Volley.newRequestQueue(this.c);
         TokenRequest tokenRequest = new TokenRequest(username, responseListener);
+        tokenRequest.setShouldCache(false);
         queue.add(tokenRequest);
 
 

@@ -17,21 +17,6 @@
             android:background="@drawable/card_edge"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/textViewRating2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/textViewPrice"
-                android:layout_alignBottom="@+id/textViewPrice"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:background="@color/colorPrimary"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="4.7"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small.Inverse"
-                android:textStyle="bold" />
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="120dp"
@@ -90,6 +75,15 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                 android:textColor="@android:color/black"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/textViewRating"
+                android:text="Donate" />
 
         </RelativeLayout>
 

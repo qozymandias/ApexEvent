@@ -105,6 +105,9 @@ public class Tab3Profile extends Fragment {
         if(URLUtil.isValidUrl(loc)) {
             Glide.with(getContext())
                     .load(loc)
+                    .placeholder(R.drawable.profile)
+                    .dontAnimate()
+                    .fitCenter()
                     .into(ivProfile);
         }
 
@@ -130,6 +133,7 @@ public class Tab3Profile extends Fragment {
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
         TokenRequest update = new TokenRequest(username, newResponseListener);
+        update.setShouldCache(false);
         queue.add(update);
 
 
@@ -179,6 +183,7 @@ public class Tab3Profile extends Fragment {
                                     // update tokens
                                     RequestQueue queue = Volley.newRequestQueue(getContext());
                                     UpdateTokenRequest update = new UpdateTokenRequest(username, tokens, days, newResponseListener);
+                                    update.setShouldCache(false);
                                     queue.add(update);
 
                                 } else {
@@ -196,6 +201,7 @@ public class Tab3Profile extends Fragment {
 
                 RequestQueue queue = Volley.newRequestQueue(getContext());
                 TokenRequest update = new TokenRequest(username, newResponseListener);
+                update.setShouldCache(false);
                 queue.add(update);
             }
         });
@@ -268,6 +274,7 @@ public class Tab3Profile extends Fragment {
 
                         RequestQueue queue = Volley.newRequestQueue(getContext());
                         TokenRequest update = new TokenRequest(username, newResponseListener);
+                        update.setShouldCache(false);
                         queue.add(update);
 
 
@@ -334,6 +341,7 @@ public class Tab3Profile extends Fragment {
 
                                 RequestQueue queue = Volley.newRequestQueue(getContext());
                                 TokenRequest update = new TokenRequest(username, newResponseListener);
+                                update.setShouldCache(false);
                                 queue.add(update);
                             }
                         });
